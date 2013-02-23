@@ -1,0 +1,29 @@
+#BBServer
+
+BBServer instances enable multiple BlazingBarrels clients to connect and
+interact in real time.
+
+##Authorization
+
+When attempting to connect to a BBServer instance for multiplayer gameplay,
+users are prompted to enter both the address and password of a server. If the
+server running at the provided address has a password that matches the supplied
+one, then the client is permitted to connect and is added to the server's
+multicast pool (a list of clients that should receive packet broadcasts).
+
+##Data Transfer
+
+BBServer instances communicate with BlazingBarrels clients using a packet-based
+UDP connection. As such, the BBServer maintains three packet transfer threads:
+* ReceiverThread - collects and unpacks incoming packets
+* SenderThread - packs and sends packets to specific clients
+* MulticastThread - broadcasts packets to a specified group address. Clients
+open MulticastSockets to listen for traffic on that address.
+
+##Project Info
+
+<b>Author:</b> LinearLogic
+
+<b>Since:</b> 2/22/2013
+
+<b>Language:</b> Java
