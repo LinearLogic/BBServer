@@ -7,7 +7,7 @@ import java.net.InetAddress;
  * {@link Packet0AuthRequest} to attempt authorization in order to join the server. This packet contains the server's
  * verdict, and if the user was successfully authorized, the server will now wait for the client to send a
  * {@link Packet2PlayerJoin} to begin interaction with the server.<p>
- * This packet is only ever sent (never received) by the server.
+ * This packet is only ever sent (never received) by the server, in response to a {@link Packet0AuthRequest}.
  * 
  * @author LinearLogic
  * @since 0.0.6

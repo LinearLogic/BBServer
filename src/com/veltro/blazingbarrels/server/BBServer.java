@@ -4,14 +4,14 @@ package com.veltro.blazingbarrels.server;
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.0.6
+ * @version 0.0.7
  */
 public class BBServer {
 
 	/**
 	 * The current version of the server software
 	 */
-	public static final String VERSION = "0.0.6";
+	public static final String VERSION = "0.0.7";
 
 	/**
 	 * Program entry point
