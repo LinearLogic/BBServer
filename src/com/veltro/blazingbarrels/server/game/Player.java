@@ -21,6 +21,12 @@ public class Player {
 	private Location3D location;
 
 	/**
+	 * Flag for administrator status - if 'true', the player is an admin and has a number of privileges, such as an
+	 * immunity to being kicked.
+	 */
+	private boolean isAdmin;
+
+	/**
 	 * Status flag for flight - if 'true', gravity does not affect the player
 	 */
 	private boolean flyMode;
@@ -47,6 +53,31 @@ public class Player {
 		this.location = location;
 	}
 
+	/**
+	 * Simple kick method - calls {@link #kick(String)} passing "none" as the reason
+	 * 
+	 * @return 'true' if the player was successfully kicked from the server, else 'false'. The kick will fail if the
+	 * player is not on the server or if the player has administrator privileges.
+	 */
+	public boolean kick() {
+		return kick("none");
+	}
+
+	/**
+	 * Attempts to kick the player from the server for the provided reason
+	 * 
+	 * @param reason
+	 * @return 'true' if the player was successfully kicked from the server, else 'false'. The kick will fail if the
+	 * player is not on the server or if the player has administrator privileges.
+	 */
+	public boolean kick(String reason) {
+		if (isAdmin)
+			return false;
+		if (!World.removePlayer(this))
+			return false;
+		// TODO: send kick packet
+		return true;
+	}
 	/**
 	 * @return The player's name
 	 */
@@ -140,6 +171,22 @@ public class Player {
 	}
 
 	/**
+	 * @return Whether the player is an administrator
+	 */
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+	/**
+	 * Sets whether the player {@link #isAdmin}
+	 * 
+	 * @param status 'true' add the administrator status to the player, 'false' to revoke it
+	 */
+	public void setAdmin(boolean status) {
+		isAdmin = status;
+	}
+
+	/**
 	 * @return Whether the player is in {@link #flyMode}
 	 */
 	public boolean isFlyModeEnabled() {
@@ -149,7 +196,7 @@ public class Player {
 	/**
 	 * Sets whether the player is in {@link #flyMode}
 	 * 
-	 * @param active 'true' to enabled fly mode, 'false' to disable it
+	 * @param active 'true' to enable fly mode, 'false' to disable it
 	 */
 	public void setFlyMode(boolean active) {
 		flyMode = active;

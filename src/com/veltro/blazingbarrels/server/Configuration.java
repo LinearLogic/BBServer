@@ -44,6 +44,14 @@ public class Configuration {
 	private int port;
 
 	/**
+	 * The radius, in pixels, of the cylindrical border that encloses the in-game world. This value is supplied to
+	 * clients connected to the server in order for them to handle collisions with the world border.<p>
+	 * Like the other config values, the world radius cannot be changed without restarting the server, so it does not
+	 * have a setter method.
+	 */
+	private int worldRadius;
+
+	/**
 	 * The password that users attempting to connect to the server must provide during authorization. If this field is
 	 * null or is an empty String, password checking will not be performed on incoming {@link Packet0AuthRequest}s.<p>
 	 * Like the other config values, the password cannot be changed without restarting the server, so it does
@@ -111,6 +119,14 @@ public class Configuration {
 				}
 				continue;
 			}
+			if (data[0].equalsIgnoreCase("world-radius:") && data.length == 2) {
+				try {
+					worldRadius = Integer.parseInt(data[1]);
+				} catch (NumberFormatException e) {
+					System.err.println("Invalid world radius in the config file: not a number. Using default value...");
+				}
+				continue;
+			}
 		}
 		saveValues();
 	}
@@ -136,6 +152,7 @@ public class Configuration {
 		pw.println("Password:" + (password == null || password.equals("") ? "" : " " + password));
 		pw.println("Player-cap: " + playerCap);
 		pw.println("Port: " + port);
+		pw.println("World-radius: " + worldRadius);
 		pw.close();
 		try {
 			fw.close();
@@ -154,6 +171,7 @@ public class Configuration {
 		playerCap = 5;
 		port = 7430;
 		password = null;
+		worldRadius = 500;
 	}
 
 	/**
@@ -175,6 +193,13 @@ public class Configuration {
 	 */
 	public int getPort() {
 		return port;
+	}
+
+	/**
+	 * @return The server's {@link #worldRadius}
+	 */
+	public int getWorldRadius() {
+		return worldRadius;
 	}
 
 	/**
