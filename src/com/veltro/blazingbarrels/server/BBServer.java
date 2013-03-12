@@ -10,14 +10,14 @@ import com.veltro.blazingbarrels.server.connect.SenderThread;
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.0.9
+ * @version 0.0.10
  */
 public class BBServer {
 
 	/**
 	 * The current version of the server software
 	 */
-	public static final String VERSION = "0.0.9";
+	public static final String VERSION = "0.0.10";
 
 	/**
 	 * The program status flag - if set to 'false', causes the program to terminate
@@ -40,14 +40,24 @@ public class BBServer {
 	private static ReceiverThread receiver;
 
 	/**
+	 * The thread responsible for parsing console input
+	 */
+	private static InputThread input;
+
+	/**
 	 * Program entry point
 	 * 
 	 * @param args ...
 	 */
 	public static void main(String[] args) {
+		running = true;
+
+		System.out.println("Welcome to BBServer " + VERSION + ", the portal for Blazing Barrels multiplayer!");
 		File configFile = new File ("config.txt"); // File is within the jar for simplicity in testing
 		config = new Configuration(configFile);
 		config.loadValues();
+
+		// Set up threads:
 		try {
 			sender = new SenderThread();
 		} catch (SocketException e) {
@@ -67,15 +77,24 @@ public class BBServer {
 			e.printStackTrace();
 			return;
 		}
+		input = new InputThread();
+
+		// Launch threads:
 		sender.start();
 		receiver.start();
-		running = true;
+		input.start();
 
+		// Main loop
 		while(running) {
-			// Execute logic and handle packet traffic
+			// TODO: Execute logic and handle packet traffic
 		}
+
+		// Cleanup:
+		System.out.println("Saving the server configuration...");
+		config.saveValues();
 		sender.terminate();
 		receiver.terminate();
+		System.out.print("\nAdios!");
 	}
 
 	/**

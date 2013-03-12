@@ -70,7 +70,8 @@ public class Configuration {
 		try {
 			sc = new Scanner(configFile);
 		} catch (FileNotFoundException e) {
-			System.err.println("Failed to save data to the configuration - could not locate the config file.");
+			System.out.println("Failed to locate the config file. Creating a default one for you...");
+			saveValues();
 			return;
 		}
 		while (sc.hasNext()) {
@@ -101,13 +102,18 @@ public class Configuration {
 
 	/**
 	 * Writes the configuration values ({@link #playerCap}, {@link #port}, etc.) to the {@link #configFile}
+	 * 
+	 * @return 'false' if an error occurred during the method's execution that prevented the config values from being
+	 * saved, else 'true'
 	 */
 	public void saveValues() {
 		FileWriter fw;
 		try {
 			fw = new FileWriter(configFile);
 		} catch (IOException e) {
-			System.err.println("Failed to save data to the configuration - could not locate the config file.");
+			e.printStackTrace();
+			System.err.println("Critical error attempting to save the server configuration. Stopping the server...");
+			System.exit(0);
 			return;
 		}
 		PrintWriter pw = new PrintWriter(fw);
@@ -151,6 +157,6 @@ public class Configuration {
 	 * @return The server's {@link #password}
 	 */
 	public String getPassword() {
-		return password;
+		return password == null ? "" : password;
 	}
 }

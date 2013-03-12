@@ -99,7 +99,8 @@ public class ReceiverThread extends Thread {
 	/**
 	 * Causes the main loop in the {@link #run()} method to exit; as a result, the thread completes its execution. Note
 	 * that this is not a guaranteed way to instantly terminate the thread, as its execution pauses until it receives a
-	 * DatagramPacket
+	 * packet. This is not really an issue, however, as this method is only called when the server in its entirety is
+	 * shutting down.
 	 */
 	public void terminate() {
 		running = false;
