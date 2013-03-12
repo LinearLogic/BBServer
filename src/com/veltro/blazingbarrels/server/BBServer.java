@@ -10,7 +10,7 @@ import com.veltro.blazingbarrels.server.connect.SenderThread;
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.0.10
+ * @version 0.1.0
  */
 public class BBServer {
 
