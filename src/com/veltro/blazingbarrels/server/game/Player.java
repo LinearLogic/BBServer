@@ -1,6 +1,10 @@
 package com.veltro.blazingbarrels.server.game;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.veltro.blazingbarrels.server.BBServer;
+import com.veltro.blazingbarrels.server.Configuration;
 
 /**
  * Represents an in-game player connected to the server
@@ -48,9 +52,39 @@ public class Player {
 	 */
 	private int health;
 
+	/**
+	 * A list of the types of updates to the player since the last time its information was sent to connected clients
+	 */
+	private Set<ChangeType> changes = new HashSet<ChangeType>();
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name The player's unique username
+	 * @param location The player's spawn point
+	 */
 	public Player(String name, Location3D location) {
 		this.name = name;
-		this.location = location;
+		setLocation(location);
+		setHealth(BBServer.getConfig().getHealthCap());
+		setAdmin(false);
+		setVanished(false);
+		flyMode = false; // These values are initialized directly as they don't
+		godMode = false; // have ChangeTypes associated with them
+	}
+
+	/**
+	 * @return The recent {@link #changes} to the player
+	 */
+	public ChangeType[] getChanges() {
+		return (ChangeType[]) changes.toArray();
+	}
+
+	/**
+	 * Empties the list of recent {@link #changes} made to the player
+	 */
+	public void clearChanges() {
+		changes.clear();
 	}
 
 	/**
@@ -75,9 +109,11 @@ public class Player {
 			return false;
 		if (!World.removePlayer(this))
 			return false;
-		// TODO: send kick packet
+		// TODO: send disconnect packet to kicked player's client
+		changes.add(ChangeType.DISCONNECT);
 		return true;
 	}
+
 	/**
 	 * @return The player's name
 	 */
@@ -99,6 +135,7 @@ public class Player {
 	 */
 	public void setLocation(Location3D location) {
 		this.location = location;
+		changes.add(ChangeType.LOCATION);
 	}
 
 	/**
@@ -110,6 +147,7 @@ public class Player {
 	 */
 	public void teleport(float x, float y, float z) {
 		location.setPosition(x, y, z);
+		changes.add(ChangeType.LOCATION);
 	}
 
 	/**
@@ -125,11 +163,20 @@ public class Player {
 	 * @param health The player's new health level
 	 */
 	public void setHealth(int health) {
+		if (health == this.health)
+			return;
+		changes.add(ChangeType.HEALTH);
 		if (health < 1) {
-			// TODO: Respawn player
+			health = BBServer.getConfig().getHealthCap();
+			setLocation(World.getRandomSpawnPoint());
+			// Broadcast that the player has been killed and has respawned
 			return;
 		}
 		if (health > BBServer.getConfig().getHealthCap()) {
+			if (this.health == BBServer.getConfig().getHealthCap()) {
+				changes.remove(ChangeType.HEALTH);
+				return;
+			}
 			health = BBServer.getConfig().getHealthCap();
 			return;
 		}
@@ -142,15 +189,7 @@ public class Player {
 	 * @param amount An integer value, normally positive
 	 */
 	public void heal(int amount) {
-		health += amount;
-		if (health > BBServer.getConfig().getHealthCap()) {
-			health = BBServer.getConfig().getHealthCap();
-			return;
-		}
-		if (health < 1) {
-			// TODO: respawn the player
-			return;
-		}
+		setHealth(health + amount);
 	}
 
 	/**
@@ -159,15 +198,7 @@ public class Player {
 	 * @param amount An integer value, normally positive
 	 */
 	public void damage(int amount) {
-		health -= amount;
-		if (health > BBServer.getConfig().getHealthCap()) {
-			health = BBServer.getConfig().getHealthCap();
-			return;
-		}
-		if (health < 1) {
-			// TODO: respawn the player
-			return;
-		}
+		setHealth(health - amount);
 	}
 
 	/**
@@ -183,7 +214,10 @@ public class Player {
 	 * @param status 'true' add the administrator status to the player, 'false' to revoke it
 	 */
 	public void setAdmin(boolean status) {
+		if (isAdmin == status)
+			return;
 		isAdmin = status;
+		changes.add(ChangeType.ADMIN);
 	}
 
 	/**
@@ -231,6 +265,9 @@ public class Player {
 	 * @param vanished 'true' to hide the player, 'false' to reveal the player
 	 */
 	public void setVanished(boolean vanished) {
+		if (this.vanished == vanished)
+			return;
 		this.vanished = vanished;
+		changes.add(ChangeType.VISIBILITY);
 	}
 }
