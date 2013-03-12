@@ -33,7 +33,7 @@ public class Packet0AuthRequest extends BBPacket {
 	 * @param port The port on the address from which the packet was sent
 	 */
 	public Packet0AuthRequest(String username, String password, InetAddress address, int port) {
-		super(0, username + " " + password, address, port);
+		super(0, username + (password.equals("") || password == null ? "" : " " + password), address, port);
 		this.username = username;
 		this.password = password;
 	}

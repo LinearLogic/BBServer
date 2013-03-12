@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.veltro.blazingbarrels.server.connect.packet.BBPacket;
+import com.veltro.blazingbarrels.server.connect.packet.Packet0AuthRequest;
 
 /**
  * A thread dedicated to receiving Datagram packets over a network socket. While running, this thread receives Datagram
@@ -71,21 +72,34 @@ public class ReceiverThread extends Thread {
 			} catch (NumberFormatException e) { // Invalid packet format - discard packet
 				continue;
 			}
-			BBPacket received;
+			BBPacket received = null;;
 
 			switch(id) { // Only the id values of packets that a client should normally receive are handled
-			// TODO: add creation of BBPacket subclasses based on the ID of the received packet
+				case 0:
+					if (data.length == 2) { // A username but no password has been specified
+						received = new Packet0AuthRequest(data[1], null, inbound.getAddress(), inbound.getPort());
+						break;
+					}
+					if (data.length == 3) { // Both a username and password have been specified
+						received = new Packet0AuthRequest(data[1], data[2], inbound.getAddress(), inbound.getPort());
+						break;
+					}
+					received = null; // Invalid packet contents
+					break;
 				default:
-					continue;
+					break;
 			}
-			// incomingPacketQueue.add(received);
+			if (received != null)
+				incomingPacketQueue.add(received);
 			
 		}
 		socket.close();
 	}
 
 	/**
-	 * Causes the main loop in the {@link #run()} method to exit; as a result, the thread completes its execution
+	 * Causes the main loop in the {@link #run()} method to exit; as a result, the thread completes its execution. Note
+	 * that this is not a guaranteed way to instantly terminate the thread, as its execution pauses until it receives a
+	 * DatagramPacket
 	 */
 	public void terminate() {
 		running = false;

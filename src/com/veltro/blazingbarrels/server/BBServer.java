@@ -1,14 +1,28 @@
 package com.veltro.blazingbarrels.server;
 
 import java.io.File;
+import java.net.SocketException;
+
+import com.veltro.blazingbarrels.server.connect.ReceiverThread;
+import com.veltro.blazingbarrels.server.connect.SenderThread;
 
 /**
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.0.8
+ * @version 0.0.9
  */
 public class BBServer {
+
+	/**
+	 * The current version of the server software
+	 */
+	public static final String VERSION = "0.0.9";
+
+	/**
+	 * The program status flag - if set to 'false', causes the program to terminate
+	 */
+	private static boolean running = false;
 
 	/**
 	 * The utility class for management of the server's configuration
@@ -16,9 +30,14 @@ public class BBServer {
 	private static Configuration config;
 
 	/**
-	 * The current version of the server software
+	 * The thread responsible for the transmission of UDP packets over the network 
 	 */
-	public static final String VERSION = "0.0.8";
+	private static SenderThread sender;
+
+	/**
+	 * The thread responsible for the receipt of UDP packets sent over the network
+	 */
+	private static ReceiverThread receiver;
 
 	/**
 	 * Program entry point
@@ -29,7 +48,34 @@ public class BBServer {
 		File configFile = new File ("config.txt"); // File is within the jar for simplicity in testing
 		config = new Configuration(configFile);
 		config.loadValues();
-		
+		try {
+			sender = new SenderThread();
+		} catch (SocketException e) {
+			System.err.println("Failed to find an available port for packet transmission. Stopping the server...");
+			return;
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			return;
+		}
+		try {
+			receiver = new ReceiverThread(config.getPort());
+		} catch (SocketException e) {
+			System.err.println("Failed to bind to port " + config.getPort() + " for packet receipt. Is it in use by " +
+					"another program?\nStopping the server...");
+			return;
+		} catch (SecurityException e) {
+			e.printStackTrace();
+			return;
+		}
+		sender.start();
+		receiver.start();
+		running = true;
+
+		while(running) {
+			// Execute logic and handle packet traffic
+		}
+		sender.terminate();
+		receiver.terminate();
 	}
 
 	/**
@@ -37,5 +83,27 @@ public class BBServer {
 	 */
 	public static Configuration getConfig() {
 		return config;
+	}
+
+	/**
+	 * @return The server's {@link #sender} thread
+	 */
+	public static SenderThread getSenderDaemon() {
+		return sender;
+	}
+
+	/**
+	 * @return The server's {@link #receiver} thread
+	 */
+	public static ReceiverThread getReceiverDaemon() {
+		return receiver;
+	}
+
+	/**
+	 * Causes the server's main logic loop to exit by setting the value of the {@link #running} flag to 'false'
+	 */
+	public static void terminate() {
+		System.out.println("Stopping the server...");
+		running = false;
 	}
 }
