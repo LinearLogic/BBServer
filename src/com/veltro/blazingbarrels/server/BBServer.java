@@ -10,14 +10,14 @@ import com.veltro.blazingbarrels.server.connect.SenderThread;
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.1.0
+ * @version 0.1.1
  */
 public class BBServer {
 
 	/**
 	 * The current version of the server software
 	 */
-	public static final String VERSION = "0.0.10";
+	public static final String VERSION = "0.1.1";
 
 	/**
 	 * The program status flag - if set to 'false', causes the program to terminate

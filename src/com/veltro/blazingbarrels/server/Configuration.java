@@ -21,26 +21,33 @@ import com.veltro.blazingbarrels.server.connect.packet.Packet0AuthRequest;
 public class Configuration {
 
 	/**
+	 * The maximum health value a player can have. When a player spawns, their health level is set to this value.<p>
+	 * Like the other config values, the health cap cannot be changed without restarting the server, so it
+	 * does not have a setter method.
+	 */
+	private int healthCap;
+
+	/**
 	 * The maximum number of players allowed on the server simultaneously. Note that this limit does not apply to
 	 * server administrators.<p>
-	 * Note the lack of a setter method for this value; once in operation, the server's player cap cannot be changed
-	 * without restarting the program.
+	 * Like the other config values, the player cap cannot be changed without restarting the server, so it
+	 * does not have a setter method.
 	 */
 	private int playerCap;
 
 	/**
 	 * The port number on which to open a socket for use by the {@link ReceiverThread} (a port does not need
 	 * to be specified for use by the {@link SenderThread}). <p>
-	 * Note the lack of a setter method for this value; once in operation, the server's port cannot be changed without
-	 * restarting the program.
+	 * Like the other config values, the port cannot be changed without restarting the server, so it does not
+	 * have a setter method.
 	 */
 	private int port;
 
 	/**
 	 * The password that users attempting to connect to the server must provide during authorization. If this field is
 	 * null or is an empty String, password checking will not be performed on incoming {@link Packet0AuthRequest}s.<p>
-	 * Like the {@link #playerCap} and {@link #port} values, the server's password cannot be changed without restarting
-	 * the program, so it does not have a setter method.
+	 * Like the other config values, the password cannot be changed without restarting the server, so it does
+	 * not have a setter method.
 	 */
 	private String password;
 
@@ -76,6 +83,14 @@ public class Configuration {
 		}
 		while (sc.hasNext()) {
 			String[] data = sc.nextLine().split("\\s+", 2);
+			if (data[0].equalsIgnoreCase("health-cap:")) {
+				try {
+					healthCap = Integer.parseInt(data[1]);
+				} catch (NumberFormatException e) {
+					System.err.println("Invalid health cap in the config file: not a number. Using default value...");
+				}
+				continue;
+			}
 			if (data[0].equalsIgnoreCase("password:")) {
 				password = data.length == 2 ? data[1].trim() : null;
 				continue;
@@ -117,6 +132,7 @@ public class Configuration {
 			return;
 		}
 		PrintWriter pw = new PrintWriter(fw);
+		pw.println("Health-cap: " + healthCap);
 		pw.println("Password:" + (password == null || password.equals("") ? "" : " " + password));
 		pw.println("Player-cap: " + playerCap);
 		pw.println("Port: " + port);
@@ -134,9 +150,17 @@ public class Configuration {
 	 * file will still have values assigned.
 	 */
 	private void loadDefaults() {
+		healthCap = 100;
 		playerCap = 5;
 		port = 7430;
 		password = null;
+	}
+
+	/**
+	 * @return The server's {@link #healthCap} value
+	 */
+	public int getHealthCap() {
+		return healthCap;
 	}
 
 	/**
