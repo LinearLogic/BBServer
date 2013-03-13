@@ -12,6 +12,11 @@ import java.util.ArrayList;
 public class World {
 
 	/**
+	 * The maximum value of the world radius that can be set in the {@link Configuration}
+	 */
+	public static final int MAX_RADIUS = 10000;
+
+	/**
 	 * A list of the {@link Player players} currently connected to the server
 	 */
 	private static ArrayList<Player> players = new ArrayList<Player>();

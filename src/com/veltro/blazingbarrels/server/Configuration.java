@@ -10,6 +10,7 @@ import java.util.Scanner;
 import com.veltro.blazingbarrels.server.connect.ReceiverThread;
 import com.veltro.blazingbarrels.server.connect.SenderThread;
 import com.veltro.blazingbarrels.server.connect.packet.Packet0AuthRequest;
+import com.veltro.blazingbarrels.server.game.World;
 
 /**
  * Configuration manager - provides methods for accessing and altering nodes in the {@link #configFile}, such as the
@@ -95,7 +96,7 @@ public class Configuration {
 				try {
 					healthCap = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
-					System.err.println("Invalid health cap in the config file: not a number. Using default value...");
+					System.err.println("Invalid health cap in the config file: not a number. Using default value.");
 				}
 				continue;
 			}
@@ -107,7 +108,7 @@ public class Configuration {
 				try {
 					playerCap = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
-					System.err.println("Invalid player cap in the config file: not a number. Using default value...");
+					System.err.println("Invalid player cap in the config file: not a number. Using default value.");
 				}
 				continue;
 			}
@@ -115,7 +116,7 @@ public class Configuration {
 				try {
 					port = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
-					System.err.println("Invalid port value in the config file: not a number. Using default value...");
+					System.err.println("Invalid port value in the config file: not a number. Using default value.");
 				}
 				continue;
 			}
@@ -123,7 +124,12 @@ public class Configuration {
 				try {
 					worldRadius = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
-					System.err.println("Invalid world radius in the config file: not a number. Using default value...");
+					System.err.println("Invalid world radius in the config file: not a number. Using default value.");
+				}
+				if (worldRadius > World.MAX_RADIUS) {
+					worldRadius = World.MAX_RADIUS;
+					System.out.println("The world radius specified in the config file is too large. Using radius " +
+							"limit (" + worldRadius + ") instead.");
 				}
 				continue;
 			}
