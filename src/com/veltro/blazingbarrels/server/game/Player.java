@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.veltro.blazingbarrels.server.BBServer;
 import com.veltro.blazingbarrels.server.Configuration;
+import com.veltro.blazingbarrels.server.connect.packet.Packet6ServerSnapshot;
 
 /**
  * Represents an in-game player connected to the server
@@ -28,7 +29,7 @@ public class Player {
 	 * Flag for administrator status - if 'true', the player is an admin and has a number of privileges, such as an
 	 * immunity to being kicked.
 	 */
-	private boolean isAdmin;
+	private boolean admin;
 
 	/**
 	 * Status flag for flight - if 'true', gravity does not affect the player
@@ -71,6 +72,13 @@ public class Player {
 		setVanished(false);
 		flyMode = false; // These values are initialized directly as they don't
 		godMode = false; // have ChangeTypes associated with them
+	}
+
+	/**
+	 * @return A string containing all of the player's data needed to add the player to a {@link Packet6ServerSnapshot}
+	 */
+	public String generateSnapshotString() {
+		return name + "." + location.toString() + "." + health + "." + (admin ? "1." : "0.") + (vanished ? "1" : "0");
 	}
 
 	/**
@@ -185,18 +193,18 @@ public class Player {
 	 * @return Whether the player is an administrator
 	 */
 	public boolean isAdmin() {
-		return isAdmin;
+		return admin;
 	}
 
 	/**
-	 * Sets whether the player {@link #isAdmin}
+	 * Sets whether the player is an {@link #admin}
 	 * 
 	 * @param status 'true' add the administrator status to the player, 'false' to revoke it
 	 */
 	public void setAdmin(boolean status) {
-		if (isAdmin == status)
+		if (admin == status)
 			return;
-		isAdmin = status;
+		admin = status;
 		changes.add(ChangeType.ADMIN);
 	}
 

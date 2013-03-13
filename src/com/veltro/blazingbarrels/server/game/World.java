@@ -32,6 +32,9 @@ public class World {
 	 * @param player
 	 */
 	public static void addPlayer(Player player) {
+		for (Player p : players)
+			if (p.getName().equalsIgnoreCase(player.getName()))
+				return;
 		players.add(player);
 	}
 

@@ -3,6 +3,7 @@ package com.veltro.blazingbarrels.server;
 import java.io.File;
 import java.net.SocketException;
 
+import com.veltro.blazingbarrels.server.connect.PacketManager;
 import com.veltro.blazingbarrels.server.connect.ReceiverThread;
 import com.veltro.blazingbarrels.server.connect.SenderThread;
 
@@ -10,14 +11,14 @@ import com.veltro.blazingbarrels.server.connect.SenderThread;
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.2.4
+ * @version 0.2.5
  */
 public class BBServer {
 
 	/**
 	 * The current version of the server software
 	 */
-	public static final String VERSION = "0.2.4";
+	public static final String VERSION = "0.2.5";
 
 	/**
 	 * The program status flag - if set to 'false', causes the program to terminate
@@ -25,9 +26,15 @@ public class BBServer {
 	private static boolean running = false;
 
 	/**
-	 * The utility class for management of the server's configuration
+	 * The utility class for management of the server's {@link Configuration configuration}
 	 */
 	private static Configuration config;
+
+	/**
+	 * The server's {@link PacketManager}, which is responsible for the handling of received packets, the updating of
+	 * the server, and the creation of response packets to be sent to clients connected to the server.
+	 */
+	private static PacketManager pm;
 
 	/**
 	 * The thread responsible for the transmission of UDP packets over the network 
@@ -52,10 +59,12 @@ public class BBServer {
 	public static void main(String[] args) {
 		running = true;
 
+		// Preliminary stuff (config handler and packet manager setup)
 		System.out.println("Welcome to BBServer " + VERSION + ", the portal for Blazing Barrels multiplayer!");
 		File configFile = new File ("config.txt"); // File is within the jar for simplicity in testing
 		config = new Configuration(configFile);
 		config.loadValues();
+		pm = new PacketManager();
 
 		// Set up threads:
 		try {
@@ -86,7 +95,7 @@ public class BBServer {
 
 		// Main loop
 		while(running) {
-			// TODO: Execute logic and handle packet traffic
+			pm.runCycle();
 		}
 
 		// Cleanup:
@@ -102,6 +111,13 @@ public class BBServer {
 	 */
 	public static Configuration getConfig() {
 		return config;
+	}
+
+	/**
+	 * @return The server's {@link #pm packet manager}
+	 */
+	public static PacketManager getPacketManager() {
+		return pm;
 	}
 
 	/**
