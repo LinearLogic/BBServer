@@ -24,12 +24,12 @@ public class Packet0AuthRequest extends BBPacket {
 
 	/**
 	 * Constructs the {@link BBPacket} superclass with the ID of this packet (0), the data it contains, and its
-	 * Internet destination location.
+	 * Internet destination address.
 	 * 
 	 * @param username An account's {@link #username}
 	 * @param password The {@link #password}, which in the event of successful authentication will match the password
 	 * of the server
-	 * @param address The location from which the packet was sent (and to which a response packet should be sent)
+	 * @param address The IP address from which the packet was sent (and to which a response packet should be sent)
 	 * @param port The port on the address from which the packet was sent
 	 */
 	public Packet0AuthRequest(String username, String password, InetAddress address, int port) {

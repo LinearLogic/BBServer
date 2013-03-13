@@ -6,7 +6,7 @@ import java.net.InetAddress;
  * This packet is sent to a client from a BBServer instance in response to the client's sending a
  * {@link Packet0AuthRequest} to attempt authorization in order to join the server. This packet contains the server's
  * verdict, and if the user was successfully authorized, the server will now wait for the client to send a
- * {@link Packet2PlayerJoin} to begin interaction with the server.<p>
+ * {@link Packet3PlayerJoin} to begin interaction with the server.<p>
  * This packet is only ever sent (never received) by the server, in response to a {@link Packet0AuthRequest}.
  * 
  * @author LinearLogic
@@ -26,12 +26,12 @@ public class Packet1AuthResponse extends BBPacket {
 
 	/**
 	 * Constructs the {@link BBPacket} superclass with the ID of this packet (1), the data it contains, and its
-	 * Internet source location.
+	 * Internet source address.
 	 * 
 	 * @param username An account's {@link #username}
 	 * @param authorizationVerdict A String flag that is either "1" or "0" depending on the result of the user's
 	 * attempt at authorization on the server
-	 * @param address The location from which the packet was sent
+	 * @param address The IP address from which the packet was sent
 	 * @param port The port on the address from which the packet was sent
 	 */
 	public Packet1AuthResponse(String username, String authorizationVerdict, InetAddress address, int port) {

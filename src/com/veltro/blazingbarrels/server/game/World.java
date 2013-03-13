@@ -74,6 +74,12 @@ public class World {
 		return output;
 	}
 
+	public static Player getPlayer(String name) {
+		for (Player p : players)
+			if (p.getName().trim().equalsIgnoreCase(name.trim()))
+				return p;
+		return null;
+	}
 	/**
 	 * Adds the provided location to the list of player spawn points
 	 * 

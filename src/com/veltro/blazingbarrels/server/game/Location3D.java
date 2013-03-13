@@ -63,6 +63,31 @@ public class Location3D {
 	}
 
 	/**
+	 * String-based constructor - constructs the location with default values and then attempts to update the values
+	 * based on the contents of the provided location string. If said string is improperly formatted, the default
+	 * location values are used.
+	 * 
+	 * @param locationString The location rendered as a String (usually via the {@link #toString()} method)
+	 */
+	public Location3D(String locationString) {
+		this(); // Load defaults
+		String[] data = locationString.split(":");
+		if (data.length != 6)
+			return;
+		try {
+			x = Integer.parseInt(data[0]);
+			y = Integer.parseInt(data[1]);
+			z = Integer.parseInt(data[2]);
+			yaw = Integer.parseInt(data[3]);
+			pitch = Integer.parseInt(data[4]);
+			roll = Integer.parseInt(data[5]);
+		} catch (NumberFormatException e) { // Invalid formatting - revert to default location
+			return;
+		}
+			
+	}
+
+	/**
 	 * Complete constructor - takes the x, y, and z coordinates of the location, as well as its pitch and yaw, as
 	 * parameters.
 	 * 
