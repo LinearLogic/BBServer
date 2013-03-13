@@ -88,30 +88,10 @@ public class Player {
 	}
 
 	/**
-	 * Simple kick method - calls {@link #kick(String)} passing "none" as the reason
-	 * 
-	 * @return 'true' if the player was successfully kicked from the server, else 'false'. The kick will fail if the
-	 * player is not on the server or if the player has administrator privileges.
+	 * Kicks the player from the server
 	 */
-	public boolean kick() {
-		return kick("none");
-	}
-
-	/**
-	 * Attempts to kick the player from the server for the provided reason
-	 * 
-	 * @param reason
-	 * @return 'true' if the player was successfully kicked from the server, else 'false'. The kick will fail if the
-	 * player is not on the server or if the player has administrator privileges.
-	 */
-	public boolean kick(String reason) {
-		if (isAdmin)
-			return false;
-		if (!World.removePlayer(this))
-			return false;
-		// TODO: send disconnect packet to kicked player's client
-		changes.add(ChangeType.DISCONNECT);
-		return true;
+	public void kick() {
+		changes.add(ChangeType.DISCONNECT_KICK);
 	}
 
 	/**

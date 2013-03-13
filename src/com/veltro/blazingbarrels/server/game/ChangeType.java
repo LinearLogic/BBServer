@@ -12,11 +12,19 @@ package com.veltro.blazingbarrels.server.game;
 public enum ChangeType {
 
 	/**
-	 * This change overrides all others and is the only change sent when a player disconnects. Upon being notified that
-	 * a player has disconnected, the client removes that player from its list of online players and displays the
-	 * disconnect message.
+	 * When a player is kicked from the server, this is the only change sent to clients.
 	 */
-	DISCONNECT,
+	DISCONNECT_KICK,
+
+	/**
+	 * When a player's network connection times out, this is the only change sent to clients.
+	 */
+	DISCONNECT_TIMEOUT,
+
+	/**
+	 * When a player voluntarily disconnects from the server, this is the only change sent to clients.
+	 */
+	DISCONNECT_QUIT,
 
 	/**
 	 * This change signifies that a player's administrator status has been toggled, and the client is informed of this
