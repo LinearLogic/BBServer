@@ -15,22 +15,22 @@ public abstract class BBPacket implements Comparable<BBPacket> {
 	 * The integer ID corresponding to the type of packet. As well as serving to identify an incoming packet, the ID
 	 * determines the packet's priority in the {@link #compareTo(BBPacket)} method.
 	 */
-	private int ID;
+	protected int ID;
 
 	/**
 	 * The String of data to be broken down into bytes and inserted into a DatagramPacket for transmission
 	 */
-	private String data;
+	protected String data;
 
 	/**
 	 * The IP address of the packet's destination
 	 */
-	private InetAddress address;
+	protected InetAddress address;
 
 	/**
 	 * The port (on the {@link #address}) of the packet's source or destination
 	 */
-	private int port;
+	protected int port;
 
 	/**
 	 * Constructor - called by the BBPacket subclasses during their construction

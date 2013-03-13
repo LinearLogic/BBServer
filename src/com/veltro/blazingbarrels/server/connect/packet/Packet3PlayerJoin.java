@@ -6,7 +6,9 @@ import java.net.InetAddress;
  * This packet is sent from a client after receiving a positive {@link Packet1AuthResponse} and serves to inform the
  * server of the client's intent to join and play in-game. Upon receiving this packet, the server broadcasts a
  * {@link Packet4PlayerConnect} to enable clients to add the newly joined player to their game worlds. The server also
- * dispatches a {@link Packet6ServerSnapshot} to the newly connected client so it can populate its game world.
+ * dispatches a {@link Packet6ServerSnapshot} to the newly connected client so it can populate its game world.<p>
+ * 
+ * This packet is only ever received by the server.
  * 
  * @author LinearLogic
  * @since 0.2.2

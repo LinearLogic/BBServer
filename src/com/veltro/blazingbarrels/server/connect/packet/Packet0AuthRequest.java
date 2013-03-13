@@ -3,8 +3,12 @@ package com.veltro.blazingbarrels.server.connect.packet;
 import java.net.InetAddress;
 
 /**
- * The packet sent by the client when attempting to authorize on a server in order to join and play.<p>
- * This packet is only ever received (never sent) by the server, which responds with a {@link Packet1AuthResponse}.
+ * The packet sent by the client when attempting to authorize on a server in order to join and play. It contains the
+ * username of the player attempting to connect and the password supplied by the client. If the password matches the
+ * server's password or if the server does not have a password, the client is sent a positive response; otherwise, the
+ * client receives a negative response. In both cases, the server sends a {@link Packet1AuthResponse} to the client.<p>
+ * 
+ * This packet is only ever received by the server.
  * 
  * @author LinearLogic
  * @since 0.0.5

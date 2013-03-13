@@ -8,7 +8,8 @@ import java.net.InetAddress;
  * amount of time has passed. If no response from the client has been received after sending three of these packets,
  * the user's account will be deauthorized on the server, meaning that a new login handshake will have to occur before
  * the client can rejoin the server.<p>
- * This packet is only ever sent (never received) by the server.
+ * 
+ * This packet is only ever sent by the server.
  * 
  * @author LinearLogic
  * @since 0.0.7
