@@ -6,7 +6,7 @@ import com.veltro.blazingbarrels.server.Configuration;
 import com.veltro.blazingbarrels.server.game.Location3D;
 
 /**
- * This packet is sent by the server upon receipt of a {@link Packet3PlayerJoin}, and is used to inform all connected
+ * This packet is sent by the server upon receipt of a {@link Packet20PlayerJoin}, and is used to inform all connected
  * clients of the attributes of the player that has joined (name, location, etc.) so that the clients can update their
  * game worlds.<p>
  * 
@@ -15,7 +15,7 @@ import com.veltro.blazingbarrels.server.game.Location3D;
  * @author LinearLogic
  * @since 0.2.3
  */
-public class Packet4PlayerConnect extends BBPacket {
+public class Packet21PlayerConnect extends BBPacket {
 
 	/**
 	 * The username of the player connecting to the server
@@ -45,7 +45,7 @@ public class Packet4PlayerConnect extends BBPacket {
 	private boolean vanished;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (4), its data rendered as a string, and
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (21), its data rendered as a string, and
 	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username The player's name
@@ -56,9 +56,9 @@ public class Packet4PlayerConnect extends BBPacket {
 	 * @param address The packet's destination address
 	 * @param port The port on the above address
 	 */
-	public Packet4PlayerConnect(String username, Location3D spawnLocation, int health, boolean isAdmin,
+	public Packet21PlayerConnect(String username, Location3D spawnLocation, int health, boolean isAdmin,
 			boolean isVanished, InetAddress address, int port) {
-		super(4, username + " " + (spawnLocation == null ? "." : spawnLocation.toString()) + " " + health + " " +
+		super(21, username + " " + (spawnLocation == null ? "." : spawnLocation.toString()) + " " + health + " " +
 			(isAdmin ? "1 " : "0 ") + (isVanished ? "1" : "0"), address, port);
 		this.username = username;
 		location = spawnLocation;

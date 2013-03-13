@@ -4,16 +4,16 @@ import java.net.InetAddress;
 
 /**
  * This packet is sent to a client from a BBServer instance in response to the client's sending a
- * {@link Packet0AuthRequest} to attempt authorization in order to join the server. This packet contains the server's
+ * {@link Packet00AuthRequest} to attempt authorization in order to join the server. This packet contains the server's
  * verdict, and if the user was successfully authorized, the server will now wait for the client to send a
- * {@link Packet3PlayerJoin} to begin interaction with the server.<p>
+ * {@link Packet20PlayerJoin} to begin interaction with the server.<p>
  * 
  * This packet is only ever sent by the server.
  * 
  * @author LinearLogic
  * @since 0.0.6
  */
-public class Packet1AuthResponse extends BBPacket {
+public class Packet01AuthResponse extends BBPacket {
 
 	/**
 	 * The username of the account that attempted authorization on a BBServer instance and is now receiving its verdict
@@ -35,7 +35,7 @@ public class Packet1AuthResponse extends BBPacket {
 	 * @param address The IP address from which the packet was sent
 	 * @param port The port on the address from which the packet was sent
 	 */
-	public Packet1AuthResponse(String username, String authorizationVerdict, InetAddress address, int port) {
+	public Packet01AuthResponse(String username, String authorizationVerdict, InetAddress address, int port) {
 		super(1, "username " + authorizationVerdict, address, port);
 		this.username = username;
 		authorized = (authorizationVerdict.equals("1")) ? true : false;

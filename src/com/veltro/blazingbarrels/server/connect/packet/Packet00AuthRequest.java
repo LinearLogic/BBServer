@@ -6,14 +6,14 @@ import java.net.InetAddress;
  * The packet sent by the client when attempting to authorize on a server in order to join and play. It contains the
  * username of the player attempting to connect and the password supplied by the client. If the password matches the
  * server's password or if the server does not have a password, the client is sent a positive response; otherwise, the
- * client receives a negative response. In both cases, the server sends a {@link Packet1AuthResponse} to the client.<p>
+ * client receives a negative response. In both cases, the server sends a {@link Packet01AuthResponse} to the client.<p>
  * 
  * This packet is only ever received by the server.
  * 
  * @author LinearLogic
  * @since 0.0.5
  */
-public class Packet0AuthRequest extends BBPacket {
+public class Packet00AuthRequest extends BBPacket {
 
 	/**
 	 * The username of the player attempting to log on to a BBServer instance to play
@@ -36,7 +36,7 @@ public class Packet0AuthRequest extends BBPacket {
 	 * @param address The IP address from which the packet was sent (and to which a response packet should be sent)
 	 * @param port The port on the address from which the packet was sent
 	 */
-	public Packet0AuthRequest(String username, String password, InetAddress address, int port) {
+	public Packet00AuthRequest(String username, String password, InetAddress address, int port) {
 		super(0, username + (password.equals("") || password == null ? "" : " " + password), address, port);
 		this.username = username;
 		this.password = password;

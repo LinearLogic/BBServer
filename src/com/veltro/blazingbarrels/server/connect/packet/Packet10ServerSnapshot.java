@@ -10,15 +10,17 @@ import com.veltro.blazingbarrels.server.game.Player;
  * world and all its contents. Due to size limit on the {@link BBPacket} payload, the server will occasionally send
  * multiple instances of this packet in order to provide a complete snapshot (whether this happens is determined based
  * on the return value of the {@link #addPlayerSnapshot(Player)} method each time a player's information is appended to
- * the packet's {@link BBPacket#data}).
+ * the packet's {@link BBPacket#data}).<p>
+ * 
+ * This packet is only ever sent by the server.
  * 
  * @author LinearLogic
  * @since 0.2.6
  */
-public class Packet6ServerSnapshot extends BBPacket {
+public class Packet10ServerSnapshot extends BBPacket {
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (0), its data rendered as a string, and
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (10), its data rendered as a string, and
 	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param sendServerInfo Whether to send the client the necessary info about the server (this info is typically
@@ -26,8 +28,8 @@ public class Packet6ServerSnapshot extends BBPacket {
 	 * @param address The IP address of the client being sent the snapshot
 	 * @param port The port on the above address
 	 */
-	public Packet6ServerSnapshot(boolean sendServerInfo, InetAddress address, int port) {
-		super(6, (sendServerInfo ? "s." + BBServer.getConfig().getWorldRadius() + "." +
+	public Packet10ServerSnapshot(boolean sendServerInfo, InetAddress address, int port) {
+		super(10, (sendServerInfo ? "s." + BBServer.getConfig().getWorldRadius() + "." +
 				BBServer.getConfig().getHealthCap() : ""), address, port);
 	}
 

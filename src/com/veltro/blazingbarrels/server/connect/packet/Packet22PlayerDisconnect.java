@@ -11,7 +11,7 @@ import java.net.InetAddress;
  * @author LinearLogic
  * @since 0.2.4
  */
-public class Packet5PlayerDisconnect extends BBPacket {
+public class Packet22PlayerDisconnect extends BBPacket {
 
 	/**
 	 * The name of the player who is disconnecting (or being disconnected) from the server 
@@ -25,7 +25,7 @@ public class Packet5PlayerDisconnect extends BBPacket {
 	private String reason;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (5), its data rendered as a string, and
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (22), its data rendered as a string, and
 	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username The username of the player disconnecting from the server
@@ -33,8 +33,8 @@ public class Packet5PlayerDisconnect extends BBPacket {
 	 * @param address The IP address from which the packet was sent
 	 * @param port The port on the above address
 	 */
-	public Packet5PlayerDisconnect(String username, String reason, InetAddress address, int port) {
-		super(4, username + (reason == null || reason.equals("") ? "" : " " + reason), address, port);
+	public Packet22PlayerDisconnect(String username, String reason, InetAddress address, int port) {
+		super(22, username + (reason == null || reason.equals("") ? "" : " " + reason), address, port);
 		this.username = username;
 		this.reason = reason;
 	}

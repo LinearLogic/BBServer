@@ -4,7 +4,7 @@ import java.net.InetAddress;
 
 /**
  * This packet is sent by a BBServer instance to the client if the client's current user account has been successfully
- * authorized but the client has not sent a {@link Packet3PlayerJoin} to begin playing on the server and a certain
+ * authorized but the client has not sent a {@link Packet20PlayerJoin} to begin playing on the server and a certain
  * amount of time has passed. If no response from the client has been received after sending three of these packets,
  * the user's account will be deauthorized on the server, meaning that a new login handshake will have to occur before
  * the client can rejoin the server.<p>
@@ -14,7 +14,7 @@ import java.net.InetAddress;
  * @author LinearLogic
  * @since 0.0.7
  */
-public class Packet2DeauthWarning extends BBPacket {
+public class Packet02DeauthWarning extends BBPacket {
 
 	/**
 	 * The username of the account that will be deauthorized if no response to this packet is received by the server
@@ -30,7 +30,7 @@ public class Packet2DeauthWarning extends BBPacket {
 	 * @param address The IP address of the client being warned of impending deauthorization
 	 * @param port The port on the above address
 	 */
-	public Packet2DeauthWarning(String username, InetAddress address, int port) {
+	public Packet02DeauthWarning(String username, InetAddress address, int port) {
 		super(2, username, address, port);
 		this.username = username;
 	}

@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import com.veltro.blazingbarrels.server.connect.ReceiverThread;
 import com.veltro.blazingbarrels.server.connect.SenderThread;
-import com.veltro.blazingbarrels.server.connect.packet.Packet0AuthRequest;
+import com.veltro.blazingbarrels.server.connect.packet.Packet00AuthRequest;
 import com.veltro.blazingbarrels.server.game.World;
 
 /**
@@ -54,7 +54,7 @@ public class Configuration {
 
 	/**
 	 * The password that users attempting to connect to the server must provide during authorization. If this field is
-	 * null or is an empty String, password checking will not be performed on incoming {@link Packet0AuthRequest}s.<p>
+	 * null or is an empty String, password checking will not be performed on incoming {@link Packet00AuthRequest}s.<p>
 	 * Like the other config values, the password cannot be changed without restarting the server, so it does
 	 * not have a setter method.
 	 */

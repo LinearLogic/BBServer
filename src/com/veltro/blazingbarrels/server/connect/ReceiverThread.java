@@ -7,7 +7,7 @@ import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.veltro.blazingbarrels.server.connect.packet.BBPacket;
-import com.veltro.blazingbarrels.server.connect.packet.Packet0AuthRequest;
+import com.veltro.blazingbarrels.server.connect.packet.Packet00AuthRequest;
 
 /**
  * A thread dedicated to receiving Datagram packets over a network socket. While running, this thread receives Datagram
@@ -77,11 +77,11 @@ public class ReceiverThread extends Thread {
 			switch(id) { // Only the id values of packets that a client should normally receive are handled
 				case 0:
 					if (data.length == 2) { // A username but no password has been specified
-						received = new Packet0AuthRequest(data[1], null, inbound.getAddress(), inbound.getPort());
+						received = new Packet00AuthRequest(data[1], null, inbound.getAddress(), inbound.getPort());
 						break;
 					}
 					if (data.length == 3) { // Both a username and password have been specified
-						received = new Packet0AuthRequest(data[1], data[2], inbound.getAddress(), inbound.getPort());
+						received = new Packet00AuthRequest(data[1], data[2], inbound.getAddress(), inbound.getPort());
 						break;
 					}
 					received = null; // Invalid packet contents

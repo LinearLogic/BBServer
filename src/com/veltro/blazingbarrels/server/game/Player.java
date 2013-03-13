@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.veltro.blazingbarrels.server.BBServer;
 import com.veltro.blazingbarrels.server.Configuration;
-import com.veltro.blazingbarrels.server.connect.packet.Packet6ServerSnapshot;
+import com.veltro.blazingbarrels.server.connect.packet.Packet10ServerSnapshot;
 
 /**
  * Represents an in-game player connected to the server
@@ -75,7 +75,7 @@ public class Player {
 	}
 
 	/**
-	 * @return A string containing all of the player's data needed to add the player to a {@link Packet6ServerSnapshot}
+	 * @return A string containing all of the player's data needed to add the player to a {@link Packet10ServerSnapshot}
 	 */
 	public String generateSnapshotString() {
 		return name + "." + location.toString() + "." + health + "." + (admin ? "1." : "0.") + (vanished ? "1" : "0");
