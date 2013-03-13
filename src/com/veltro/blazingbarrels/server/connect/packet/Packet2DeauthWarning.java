@@ -22,8 +22,8 @@ public class Packet2DeauthWarning extends BBPacket {
 	private String username;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (2), the {@link #username} associated with
-	 * the deauth warning, and the packet's Internet source address.
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (2), its data rendered as a string, and
+	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username The username of the player in jeopardy of deauthorization (used by a client to make sure it the
 	 * packet isn't meant for someone else)
@@ -35,9 +35,10 @@ public class Packet2DeauthWarning extends BBPacket {
 		this.username = username;
 	}
 
-	public void handle() {
-		
-	}
+	/**
+	 * This packet is never received by the server, so it is not handled.
+	 */
+	public void handle() { }
 
 	/**
 	 * @return The {@link #username} associated with this deauthorization warning

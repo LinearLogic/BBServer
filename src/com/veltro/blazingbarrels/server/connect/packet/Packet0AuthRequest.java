@@ -27,8 +27,8 @@ public class Packet0AuthRequest extends BBPacket {
 	private String password;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (0), the data it contains, and its
-	 * Internet destination address.
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (0), its data rendered as a string, and
+	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username An account's {@link #username}
 	 * @param password The {@link #password}, which in the event of successful authentication will match the password

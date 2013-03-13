@@ -59,6 +59,7 @@ public abstract class BBPacket implements Comparable<BBPacket> {
 
 	/**
 	 * This method, implemented in {@link BBPacket} subclasses, updates the server based on the data in the packet.
+	 * Only packets received by the server are handled.
 	 */
 	public abstract void handle();
 

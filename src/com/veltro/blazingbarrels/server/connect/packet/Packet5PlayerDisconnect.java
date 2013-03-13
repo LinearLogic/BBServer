@@ -25,8 +25,8 @@ public class Packet5PlayerDisconnect extends BBPacket {
 	private String reason;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (3), the data it contains, and its
-	 * Internet source/destination address.
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (5), its data rendered as a string, and
+	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username The username of the player disconnecting from the server
 	 * @param reason The reason for the player's disconnection

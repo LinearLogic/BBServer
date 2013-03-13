@@ -27,8 +27,8 @@ public class Packet3PlayerJoin extends BBPacket {
 	private boolean isSpectator;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (3), the data it contains, and its
-	 * Internet destination address.
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (3), its data rendered as a string, and
+	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username See {@link #username}
 	 * @param spectator See {@link #isSpectator}

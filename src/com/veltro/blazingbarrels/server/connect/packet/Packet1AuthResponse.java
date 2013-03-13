@@ -26,8 +26,8 @@ public class Packet1AuthResponse extends BBPacket {
 	private boolean authorized;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass with the ID of this packet (1), the data it contains, and its
-	 * Internet source address.
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (1), its data rendered as a string, and
+	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username An account's {@link #username}
 	 * @param authorizationVerdict A String flag that is either "1" or "0" depending on the result of the user's
@@ -41,9 +41,10 @@ public class Packet1AuthResponse extends BBPacket {
 		authorized = (authorizationVerdict.equals("1")) ? true : false;
 	}
 
-	public void handle() {
-		
-	}
+	/**
+	 * This packet is never received by the server, so it is not handled.
+	 */
+	public void handle() { }
 
 	/**
 	 * @return The {@link #username} associated with the authorizations      verdict received from the server

@@ -45,7 +45,8 @@ public class Packet4PlayerConnect extends BBPacket {
 	private boolean vanished;
 
 	/**
-	 * Constructs the {@link BBPacket} superclass and initializes the packet's fields
+	 * Constructs the {@link BBPacket} superclass with the ID of this packet (4), its data rendered as a string, and
+	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username The player's name
 	 * @param spawnLocation The player's starting {@link #location}
@@ -66,9 +67,10 @@ public class Packet4PlayerConnect extends BBPacket {
 		vanished = isVanished;
 	}
 
-	public void handle() {
-		
-	}
+	/**
+	 * This packet is never received by the server, so it is not handled.
+	 */
+	public void handle() { }
 
 	/**
 	 * @return The username of the player connecting to the server
