@@ -20,6 +20,10 @@ public class BBServer {
 	 */
 	public static final String VERSION = "0.2.6";
 
+	private static final String[] goodbyes = {"Buh bye!", "Peace out!", "Later duuude!", "'Till next time!",
+		"Fare thee well!", "Godspeed!", "Adios amigo!", "Adieu!", "GTFO! loljk.", "Sayonara!", "Go outside!",
+		"WHAT ARE THESE BEATS, MAN?!", "Tight bro. Return x+y!", "See you soon!"};
+
 	/**
 	 * The program status flag - if set to 'false', causes the program to terminate
 	 */
@@ -103,7 +107,8 @@ public class BBServer {
 		config.saveValues();
 		sender.terminate();
 		receiver.terminate();
-		System.out.print("\nAdios!");
+		System.out.println("\nServer closed.");
+		System.out.println(goodbyes[(int) (Math.random() * goodbyes.length)]);
 	}
 
 	/**
