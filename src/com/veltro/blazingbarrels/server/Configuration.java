@@ -98,6 +98,11 @@ public class Configuration {
 				} catch (NumberFormatException e) {
 					System.err.println("Invalid health cap in the config file: not a number. Using default value.");
 				}
+				if (healthCap > 9999) {
+					healthCap = 9999;
+					System.err.println("The health cap specified in the config file is too large. Using the health " +
+					"cap limit (" + healthCap + ") instead.");
+				}
 				continue;
 			}
 			if (data[0].equalsIgnoreCase("password:")) {
@@ -128,7 +133,7 @@ public class Configuration {
 				}
 				if (worldRadius > World.MAX_RADIUS) {
 					worldRadius = World.MAX_RADIUS;
-					System.out.println("The world radius specified in the config file is too large. Using radius " +
+					System.err.println("The world radius specified in the config file is too large. Using radius " +
 							"limit (" + worldRadius + ") instead.");
 				}
 				continue;

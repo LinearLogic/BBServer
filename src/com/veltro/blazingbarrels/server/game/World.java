@@ -14,7 +14,7 @@ public class World {
 	/**
 	 * The maximum value of the world radius that can be set in the {@link Configuration}
 	 */
-	public static final int MAX_RADIUS = 10000;
+	public static final int MAX_RADIUS = 9999;
 
 	/**
 	 * A list of the {@link Player players} currently connected to the server
