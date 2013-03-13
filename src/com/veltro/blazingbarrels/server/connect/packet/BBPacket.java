@@ -9,10 +9,11 @@ import java.net.InetAddress;
  * @author LinearLogic
  * @since 0.0.2
  */
-public class BBPacket {
+public abstract class BBPacket implements Comparable<BBPacket> {
 
 	/**
-	 * The integer ID corresponding to the type of packet
+	 * The integer ID corresponding to the type of packet. As well as serving to identify an incoming packet, the ID
+	 * determines the packet's priority in the {@link #compareTo(BBPacket)} method.
 	 */
 	private int ID;
 
@@ -27,7 +28,7 @@ public class BBPacket {
 	private InetAddress address;
 
 	/**
-	 * The port (on the {@link #address}) of the packet's destination
+	 * The port (on the {@link #address}) of the packet's source or destination
 	 */
 	private int port;
 
@@ -54,5 +55,51 @@ public class BBPacket {
 	public DatagramPacket generatePacket() {
 		byte[] buffer = new String(ID + " " + data).getBytes();
 		return new DatagramPacket(buffer, buffer.length, address, port);
+	}
+
+	/**
+	 * This method, implemented in {@link BBPacket} subclasses, updates the server based on the data in the packet.
+	 */
+	public abstract void handle();
+
+	/**
+	 * Compares two {@link BBPacket} objects and specifies which has a higher priority (determined based on the
+	 * packets' {@link #ID} values. Packets with the highest priority are {@link #handle() handled} first during each
+	 * {@link PacketManager} cycle.
+	 * 
+	 * @param anotherPacket The BBPacket to which to compare this packet
+	 * @return A negative integer if this packet has a higher priority than the one it is being compared to, a positive
+	 * integer if the other packet has the higher priority, and zero if the packets share the same priority level.
+	 */
+	public int compareTo(BBPacket anotherPacket) {
+		return (ID / 10) - (anotherPacket.ID / 10);
+	}
+
+	/**
+	 * @return The packet's {@link #ID}
+	 */
+	public int getID() {
+		return ID;
+	}
+
+	/**
+	 * @return The packet's {@link #data}
+	 */
+	public String getData() {
+		return data;
+	}
+
+	/**
+	 * @return The packet's {@link #address}
+	 */
+	public InetAddress getAddress() {
+		return address;
+	}
+
+	/**
+	 * @return The packet's {@link #port}
+	 */
+	public int getPort() {
+		return port;
 	}
 }

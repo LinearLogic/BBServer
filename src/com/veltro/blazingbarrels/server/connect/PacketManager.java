@@ -1,5 +1,8 @@
 package com.veltro.blazingbarrels.server.connect;
 
+import java.util.TreeSet;
+
+import com.veltro.blazingbarrels.server.BBServer;
 import com.veltro.blazingbarrels.server.connect.packet.BBPacket;
 
 /**
@@ -26,7 +29,13 @@ public class PacketManager {
 	 * @see PacketManager Complete description of a cycle
 	 */
 	public void runCycle() {
-		// TODO: Handle newly arrived packets
+
+		// Handle newly arrived packets:
+		TreeSet<BBPacket> packets = new TreeSet<BBPacket>(); // A TreeSet is used to order packets by priority
+		while (!BBServer.getReceiverDaemon().incomingPacketQueue.isEmpty())
+			packets.add(BBServer.getReceiverDaemon().incomingPacketQueue.poll());
+		for (BBPacket p : packets)
+			p.handle();
 
 		// TODO: Generate response packets
 	}

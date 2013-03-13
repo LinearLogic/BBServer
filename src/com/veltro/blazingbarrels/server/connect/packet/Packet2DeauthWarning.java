@@ -32,6 +32,10 @@ public class Packet2DeauthWarning extends BBPacket {
 		this.username = username;
 	}
 
+	public void handle() {
+		
+	}
+
 	/**
 	 * @return The {@link #username} associated with this deauthorization warning
 	 */

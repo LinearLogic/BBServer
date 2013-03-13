@@ -40,6 +40,10 @@ public class Packet1AuthResponse extends BBPacket {
 		authorized = (authorizationVerdict.equals("1")) ? true : false;
 	}
 
+	public void handle() {
+		
+	}
+
 	/**
 	 * @return The {@link #username} associated with the authorizations      verdict received from the server
 	 */

@@ -38,6 +38,10 @@ public class Packet0AuthRequest extends BBPacket {
 		this.password = password;
 	}
 
+	public void handle() {
+		
+	}
+
 	/**
 	 * @return The {@link #username} of the player attempting authentication with this packet
 	 */
