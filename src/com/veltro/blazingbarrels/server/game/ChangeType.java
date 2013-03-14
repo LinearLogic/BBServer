@@ -33,6 +33,12 @@ public enum ChangeType {
 	ADMIN,
 
 	/**
+	 * This change indicates that a player's god mode status has been toggled, and the client is informed of this in
+	 * order to change the color of the player's energy shield.
+	 */
+	GODMODE,
+
+	/**
 	 * This change means that a player's health has been altered. In the event that a player dies and respawns, both a
 	 * health and location update will be registered.
 	 */

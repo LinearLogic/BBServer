@@ -33,7 +33,7 @@ public class Packet01AuthResponse extends BBPacket {
 	 * @param authorizationVerdict A String flag that is either "1" or "0" depending on the result of the user's
 	 * attempt at authorization on the server
 	 * @param address The IP address from which the packet was sent
-	 * @param port The port on the address from which the packet was sent
+	 * @param port The port on the above address
 	 */
 	public Packet01AuthResponse(String username, String authorizationVerdict, InetAddress address, int port) {
 		super(1, "username " + authorizationVerdict, address, port);

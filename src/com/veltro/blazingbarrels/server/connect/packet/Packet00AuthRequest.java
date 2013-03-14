@@ -34,7 +34,7 @@ public class Packet00AuthRequest extends BBPacket {
 	 * @param password The {@link #password}, which in the event of successful authentication will match the password
 	 * of the server
 	 * @param address The IP address from which the packet was sent (and to which a response packet should be sent)
-	 * @param port The port on the address from which the packet was sent
+	 * @param port The port on the above address
 	 */
 	public Packet00AuthRequest(String username, String password, InetAddress address, int port) {
 		super(0, username + (password.equals("") || password == null ? "" : " " + password), address, port);
