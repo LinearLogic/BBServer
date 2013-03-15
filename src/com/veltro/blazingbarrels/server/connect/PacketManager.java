@@ -4,6 +4,12 @@ import java.util.TreeSet;
 
 import com.veltro.blazingbarrels.server.BBServer;
 import com.veltro.blazingbarrels.server.connect.packet.BBPacket;
+import com.veltro.blazingbarrels.server.connect.packet.Packet10ServerSnapshot;
+import com.veltro.blazingbarrels.server.connect.packet.Packet22PlayerDisconnect;
+import com.veltro.blazingbarrels.server.connect.packet.Packet30PlayerUpdate;
+import com.veltro.blazingbarrels.server.game.ChangeType;
+import com.veltro.blazingbarrels.server.game.Player;
+import com.veltro.blazingbarrels.server.game.World;
 
 /**
  * The PacketManager is where all of the server's logic - which is based on the packets it receives - occurs. The
@@ -28,6 +34,12 @@ public class PacketManager {
 	public static final int CYCLE_LENGTH = 50;
 
 	/**
+	 * The number of cycles that have elapsed since the last server snapshot was sent to all connected clients. This
+	 * snapshot is sent every ten seconds, or 200 cycles; at the same time, this number is reset to 0.
+	 */
+	private int cycleCount = 0;
+
+	/**
 	 * Executes a cycle, advancing the game based on packets received since the last cycle and generating response
 	 * packets to be sent to update clients connected to the server.
 	 *  
@@ -43,7 +55,55 @@ public class PacketManager {
 		for (BBPacket p : packets)
 			p.handle();
 
-		// TODO: Generate response packets
+		// Generate response packets:
+		for (Player player : World.getPlayers()) {
+			if (player.getChanges().length == 0) // This player does not need to be updated
+				continue;
+			ChangeType[] changes = player.getChanges();
+			switch(changes[0]) {
+			case DISCONNECT_KICK:
+				broadcastPacket(new Packet22PlayerDisconnect(player.getName(), 2, null, 0));
+				continue;
+			case DISCONNECT_TIMEOUT:
+				broadcastPacket(new Packet22PlayerDisconnect(player.getName(), 1, null, 0));
+				continue;
+			case DISCONNECT_QUIT:
+				broadcastPacket(new Packet22PlayerDisconnect(player.getName(), 0, null, 0));
+				continue;
+			default:
+				break;
+			}
+			if (cycleCount >= 200) { // Send a server snapshot instead of update packets
+				for (Player p : World.getPlayers())
+					sendServerSnapshot(p);
+				continue;
+			}
+			Packet30PlayerUpdate outgoing = new Packet30PlayerUpdate(player.getName());
+			for (ChangeType type : changes) {
+				switch(type) {
+				case ADMIN:
+					outgoing.toggleAdminStatus();
+					break;
+				case GODMODE:
+					outgoing.toggleGodMode();
+					break;
+				case HEALTH:
+					outgoing.setHealth(player.getHealth());
+					break;
+				case LOCATION:
+					outgoing.setLocation(player.getLocation());
+					break;
+				case VISIBILITY:
+					outgoing.toggleVisibility();
+					break;
+				default:
+					// TODO: log an error, as this should never be reached
+					break;
+				}
+			}
+			outgoing.updateData();
+			broadcastPacket(outgoing);
+		}
 
 		// Round out the cycle length:
 		int dt = (int) (System.currentTimeMillis() - startTime);
@@ -56,6 +116,53 @@ public class PacketManager {
 					System.exit(0);
 				}
 			}
+		}
+		if (++cycleCount > 200) {
+			cycleCount = 0;
+		}
+	}
+
+	/**
+	 * Sends the provided packet to the client corresponding to the provided player
+	 * 
+	 * @param target A {@link Player} on the server (contained in the {@link World#players} list). This player is used to
+	 * retrieve the IP address and port of the client to which the packet should be sent.
+	 * @param packet A {@link BBPacket} subclass. The packet does not need to have its address or port specified.
+	 */
+	public void sendPacket(Player target, BBPacket packet) {
+		packet.setAddress(target.getClientAddress());
+		packet.setPort(target.getClientPort());
+		BBServer.getSenderDaemon().outgoingPacketQueue.add(packet);
+	}
+
+	/**
+	 * Sends the provided packet to all the clients with players on the server.
+	 * 
+	 * @param packet A {@link BBPacket} subclass. The packet does not need to have its address or port specified
+	 */
+	public void broadcastPacket(BBPacket packet) {
+		for (Player p : World.getPlayers()) {
+			packet.setAddress(p.getClientAddress());
+			packet.setPort(p.getClientPort());
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(packet);
+		}
+	}
+
+	/**
+	 * Sends a snapshot of the server (transfered using one or more {@link Packet10ServerSnapshot} packets) to the
+	 * client associated with the provided player.
+	 * 
+	 * @param target The player to send the server snapshot to
+	 */
+	public void sendServerSnapshot(Player target) {
+		Packet10ServerSnapshot outgoing = new Packet10ServerSnapshot(true, target.getClientAddress(),
+				target.getClientPort());
+		for (Player p : World.getPlayers()) {
+			if (outgoing.addPlayerSnapshot(p))
+				continue;
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(outgoing);
+			outgoing = new Packet10ServerSnapshot(false, target.getClientAddress(), target.getClientPort());
+			outgoing.addPlayerSnapshot(p);
 		}
 	}
 }

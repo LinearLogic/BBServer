@@ -1,5 +1,6 @@
 package com.veltro.blazingbarrels.server.game;
 
+import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,9 +17,20 @@ import com.veltro.blazingbarrels.server.connect.packet.Packet10ServerSnapshot;
 public class Player {
 
 	/**
-	 * The name the player chose when connecting to the server
+	 * The name the player chose when connecting to the server, used to identify it in packets sent between the server
+	 * and any connected Blazing Barrels clients
 	 */
 	private final String name;
+
+	/**
+	 * The IP address of the Blazing Barrels client to which this player belongs (may change over time)
+	 */
+	private InetAddress clientAddress;
+
+	/**
+	 * The port on the {@link #clientAddress} (may change over time)
+	 */
+	private int clientPort;
 
 	/**
 	 * The player's {@link Location3D location} within the game world
@@ -59,19 +71,58 @@ public class Player {
 	private Set<ChangeType> changes = new HashSet<ChangeType>();
 
 	/**
-	 * Constructor
+	 * Simplest constructor. Calls the {@link #Player(String, InetAddress, int, Location3D, int, boolean, boolean,
+	 * boolean, boolean) complete constructor} with the provided name, address, and port, and default values for every
+	 * other field.
 	 * 
-	 * @param name The player's unique username
+	 * @param name The unique username of the player
+	 * @param clientAddress The player's {@link #clientAddress IP address}
+	 * @param clientPort The port on the above address
+	 */
+	public Player(String name, InetAddress clientAddress, int clientPort) {
+		this(name, clientAddress, clientPort, World.getRandomSpawnPoint(), BBServer.getConfig().getHealthCap(), false,
+				false, false, false);
+	}
+
+	/**
+	 * Simplified constructor. Calls the {@link #Player(String, InetAddress, int, Location3D, int, boolean, boolean,
+	 * boolean, boolean) complete constructor} with the provided name, address, port, and location, and default values
+	 * for every other field.
+	 * 
+	 * @param name The unique username of the player
+	 * @param clientAddress The player's {@link #clientAddress IP address}
+	 * @param clientPort The port on the above address
 	 * @param location The player's spawn point
 	 */
-	public Player(String name, Location3D location) {
+	public Player(String name, InetAddress clientAddress, int clientPort, Location3D location) {
+		this(name, clientAddress, clientPort, location, BBServer.getConfig().getHealthCap(), false, false, false,
+				false);
+	}
+
+	/**
+	 * Complete constructor
+	 * 
+	 * @param name The unique username of the player
+	 * @param clientAddress The player's {@link #clientAddress IP address}
+	 * @param clientPort The port on the above address
+	 * @param location The player's starting {@link #location}
+	 * @param health The player's starting health level
+	 * @param isAdmin Whether the player has administrator privileges
+	 * @param inFlyMode Whether the player can fly
+	 * @param inGodMode Whether the player is invincible
+	 * @param isVanished Whether the player is visible to other players
+	 */
+	public Player(String name, InetAddress clientAddress, int clientPort, Location3D location, int health,
+			boolean isAdmin, boolean inFlyMode, boolean inGodMode, boolean isVanished) {
 		this.name = name;
-		setLocation(location);
-		setHealth(BBServer.getConfig().getHealthCap());
-		setAdmin(false);
-		setVanished(false);
-		flyMode = false; // These values are initialized directly as they don't
-		godMode = false; // have ChangeTypes associated with them
+		this.clientAddress = clientAddress;
+		this.clientPort = clientPort;
+		this.location = location;
+		this.health = health;
+		admin = isAdmin;
+		flyMode = inFlyMode;
+		godMode = inGodMode;
+		vanished = isVanished;
 	}
 
 	/**
@@ -85,7 +136,20 @@ public class Player {
 	 * @return The recent {@link #changes} to the player
 	 */
 	public ChangeType[] getChanges() {
-		return (ChangeType[]) changes.toArray();
+		ChangeType[] output = new ChangeType[changes.size()];
+		int index = 0;
+		for (ChangeType type : changes) {
+			switch(type) {
+				case DISCONNECT_KICK:
+				case DISCONNECT_TIMEOUT:
+				case DISCONNECT_QUIT:
+					return new ChangeType[] {type};
+				default:
+					output[index++] = type;
+					break;
+			}
+		}
+		return output;
 	}
 
 	/**
@@ -107,6 +171,20 @@ public class Player {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * @return The player's {@link #clientAddress}
+	 */
+	public InetAddress getClientAddress() {
+		return clientAddress;
+	}
+
+	/**
+	 * @return The port on the player's {@link #clientAddress}
+	 */
+	public int getClientPort() {
+		return clientPort;
 	}
 
 	/**
