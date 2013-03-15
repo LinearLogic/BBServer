@@ -39,6 +39,11 @@ public class Packet21PlayerConnect extends BBPacket {
 	private boolean admin;
 
 	/**
+	 * Whether the joining player is in god mode (used to determine the color of the player's energy shield)
+	 */
+	private boolean godMode;
+
+	/**
 	 * Whether the player connecting to the server is visible to other players (read: whether the player should be
 	 * rendered in the game world and should be checked for collisions)
 	 */
@@ -52,12 +57,13 @@ public class Packet21PlayerConnect extends BBPacket {
 	 * @param spawnLocation The player's starting {@link #location}
 	 * @param health The player's starting {@link #health}
 	 * @param isAdmin The player's administrator status
+	 * @param isInGodMode Whether the player is in {@link #godMode}
 	 * @param isVanished Whether the player is {@link #vanished}
 	 * @param address The packet's destination address
 	 * @param port The port on the above address
 	 */
 	public Packet21PlayerConnect(String username, Location3D spawnLocation, int health, boolean isAdmin,
-			boolean isVanished, InetAddress address, int port) {
+			boolean isInGodMode, boolean isVanished, InetAddress address, int port) {
 		super(21, username + " " + (spawnLocation == null ? "." : spawnLocation.toString()) + " " + health + " " +
 			(isAdmin ? "1 " : "0 ") + (isVanished ? "1" : "0"), address, port);
 		this.username = username;
@@ -98,6 +104,13 @@ public class Packet21PlayerConnect extends BBPacket {
 	 */
 	public boolean isPlayerAdmin() {
 		return admin;
+	}
+
+	/**
+	 * @return Whether the connecting player is in {@link #godMode}
+	 */
+	public boolean isPlayerInGodMode() {
+		return godMode;
 	}
 
 	/**

@@ -11,14 +11,14 @@ import com.veltro.blazingbarrels.server.connect.SenderThread;
  * Main class - contains {@link #main(String[]) launch method}
  * 
  * @author LinearLogic
- * @version 0.2.8
+ * @version 0.2.9
  */
 public class BBServer {
 
 	/**
 	 * The current version of the server software
 	 */
-	public static final String VERSION = "0.2.8";
+	public static final String VERSION = "0.2.9";
 
 	private static final String[] goodbyes = {"Buh bye!", "Peace out!", "Later duuude!", "'Till next time!",
 		"Fare thee well!", "Godspeed!", "Adios amigo!", "Adieu!", "GTFO! loljk.", "Sayonara!", "Go outside!",

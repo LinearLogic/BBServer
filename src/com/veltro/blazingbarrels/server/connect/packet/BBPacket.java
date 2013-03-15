@@ -98,9 +98,27 @@ public abstract class BBPacket implements Comparable<BBPacket> {
 	}
 
 	/**
+	 * Sets the packet's source/destination {@link #address} to the provided InetAddress
+	 * 
+	 * @param address
+	 */
+	public void setAddress(InetAddress address) {
+		this.address = address;
+	}
+
+	/**
 	 * @return The packet's {@link #port}
 	 */
 	public int getPort() {
 		return port;
+	}
+
+	/**
+	 * Sets the packet's source/destination port to the provided number
+	 * 
+	 * @param port A positive integer in the range of ports
+	 */
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

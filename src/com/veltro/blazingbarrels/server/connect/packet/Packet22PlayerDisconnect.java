@@ -19,24 +19,25 @@ public class Packet22PlayerDisconnect extends BBPacket {
 	private String username;
 
 	/**
-	 * The reason for the player's being disconnected from the server (used to specify whether the playe was kicked,
-	 * timed out, etc.). This is only used when the packet is sent from a server to a client.
+	 * An integer ID representing the reason for the player's disconnect. If the player voluntarily disconnected, the
+	 * ID value is 0. If the player disconnected due to a network timeout, the ID value is 1. If the player was kicked
+	 * from the server, the ID value is 2.
 	 */
-	private String reason;
+	private int reasonID;
 
 	/**
 	 * Constructs the {@link BBPacket} superclass with the ID of this packet (22), its data rendered as a string, and
 	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username The username of the player disconnecting from the server
-	 * @param reason The reason for the player's disconnection
+	 * @param reason The {@link #reasonID} of the disconnect
 	 * @param address The IP address from which the packet was sent
 	 * @param port The port on the above address
 	 */
-	public Packet22PlayerDisconnect(String username, String reason, InetAddress address, int port) {
-		super(22, username + (reason == null || reason.equals("") ? "" : " " + reason), address, port);
+	public Packet22PlayerDisconnect(String username, int reasonID, InetAddress address, int port) {
+		super(22, username + reasonID, address, port);
 		this.username = username;
-		this.reason = reason;
+		this.reasonID = reasonID;
 	}
 
 	public void handle() {
@@ -53,7 +54,7 @@ public class Packet22PlayerDisconnect extends BBPacket {
 	/**
 	 * @return The {@link #reason} for the disconnection
 	 */
-	public String getReason() {
-		return reason;
+	public int getReasonID() {
+		return reasonID;
 	}
 }
