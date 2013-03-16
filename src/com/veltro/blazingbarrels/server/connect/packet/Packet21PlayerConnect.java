@@ -4,6 +4,7 @@ import java.net.InetAddress;
 
 import com.veltro.blazingbarrels.server.Configuration;
 import com.veltro.blazingbarrels.server.game.Location3D;
+import com.veltro.blazingbarrels.server.game.Player;
 
 /**
  * This packet is sent by the server upon receipt of a {@link Packet20PlayerJoin}, and is used to inform all connected
@@ -48,6 +49,17 @@ public class Packet21PlayerConnect extends BBPacket {
 	 * rendered in the game world and should be checked for collisions)
 	 */
 	private boolean vanished;
+
+	/**
+	 * {@link Player}-based constructor - calls the {@link #Packet21PlayerConnect(String, Location3D, int, boolean,
+	 * boolean, boolean, InetAddress, int) complete constructor} passing all of the player's attributes.
+	 * 
+	 * @param player The player that has connected to the server
+	 */
+	public Packet21PlayerConnect(Player player) {
+		this(player.getName(), player.getLocation(), player.getHealth(), player.isAdmin(), player.isGodModeEnabled(),
+				player.isVanished(), player.getClientAddress(), player.getClientPort());
+	}
 
 	/**
 	 * Constructs the {@link BBPacket} superclass with the ID of this packet (21), its data rendered as a string, and

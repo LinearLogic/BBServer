@@ -17,6 +17,11 @@ import com.veltro.blazingbarrels.server.connect.packet.Packet10ServerSnapshot;
 public class Player {
 
 	/**
+	 * The radius, in pixels, of the "energy shield" sphere rendered around each player (used to handle collisions)
+	 */
+	public static final int SHIELD_RADIUS = 75;
+
+	/**
 	 * The name the player chose when connecting to the server, used to identify it in packets sent between the server
 	 * and any connected Blazing Barrels clients
 	 */

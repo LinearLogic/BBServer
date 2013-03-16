@@ -72,7 +72,7 @@ public class DeauthTask extends Thread {
 			try {
 				wait(timeout);
 			} catch (InterruptedException e) { // The client has sent a PlayerJoin packet; cease the deauth warnings
-				System.err.println("Stopping the deauth task for player " + name + "!"); // for debugging
+				System.out.println("Stopping the deauth task for player " + name + "!"); // for debugging
 				return;
 			}
 			BBServer.getSenderDaemon().outgoingPacketQueue.add(packet);

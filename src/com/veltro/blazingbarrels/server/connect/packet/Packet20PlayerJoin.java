@@ -2,6 +2,10 @@ package com.veltro.blazingbarrels.server.connect.packet;
 
 import java.net.InetAddress;
 
+import com.veltro.blazingbarrels.server.BBServer;
+import com.veltro.blazingbarrels.server.game.Player;
+import com.veltro.blazingbarrels.server.game.World;
+
 /**
  * This packet is sent from a client after receiving a positive {@link Packet01AuthResponse} and serves to inform the
  * server of the client's intent to join and play in-game. Upon receiving this packet, the server broadcasts a
@@ -40,8 +44,24 @@ public class Packet20PlayerJoin extends BBPacket {
 		super(20, username + (isSpectator ? " s" : ""), address, port);
 	}
 
+	/**
+	 * Ensures that the joining player is authorized and is not already on the server, and then cancels the
+	 * {@link DeauthTask} pinging the player's client and adds the player to the {@link World#players list of players}.
+	 * Lastly, a {@link Packet21PlayerConnect} packet is sent to all connected clients to notify them of the new player.
+	 */
 	public void handle() {
-		
+		// Make sure the player is not unauthorized or already playing on the server
+		if (!BBServer.getPacketManager().hasAssociatedDeauthTask(username) || World.getPlayer(username) != null)
+			return;
+		BBServer.getPacketManager().cancelDeauthTask(username);
+		Player joined;
+		if (isSpectator)
+			joined = new Player(username, address, port, World.getRandomSpawnPoint(),
+					BBServer.getConfig().getHealthCap(), false, true, true, true);
+		else
+			joined = new Player(username, address, port);
+		World.addPlayer(joined);
+		BBServer.getPacketManager().broadcastPacket(new Packet21PlayerConnect(joined));
 	}
 
 	/**
