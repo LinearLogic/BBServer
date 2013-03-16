@@ -2,6 +2,10 @@ package com.veltro.blazingbarrels.server.connect.packet;
 
 import java.net.InetAddress;
 
+import com.veltro.blazingbarrels.server.BBServer;
+import com.veltro.blazingbarrels.server.connect.DeauthTask;
+import com.veltro.blazingbarrels.server.game.World;
+
 /**
  * The packet sent by the client when attempting to authorize on a server in order to join and play. It contains the
  * username of the player attempting to connect and the password supplied by the client. If the password matches the
@@ -42,8 +46,30 @@ public class Packet00AuthRequest extends BBPacket {
 		this.password = password;
 	}
 
+	/**
+	 * Sends a {@link Packet01AuthResponse} to the client that sent this authorization request. The auth response will
+	 * be positive (meaning the player was authorized) iff the provided {@link #password} is accepted and if the
+	 * provided {@link #username} is not already in used on the server.<p>
+	 * If the player is successsfully authorized, a {@link DeauthTask} will be scheduled.
+	 */
 	public void handle() {
-		
+		// Make sure the player is not already on the server; if so, ignore this packet:
+		if (World.getPlayer(username) != null || BBServer.getPacketManager().hasAssociatedDeauthTask(username))
+			return;
+		if (!BBServer.getConfig().getPassword().equals("") && !BBServer.getConfig().getPassword().equals(password)) {
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, false, address,
+					port));
+			System.out.println("Player " + username + " failed to join: wrong password");
+			return;
+		}
+		if (World.getPlayer(username) != null || BBServer.getPacketManager().hasAssociatedDeauthTask(username)) {
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, false, address,
+					port));
+			System.out.println("Player " + username + " failed to join: username is taken");
+			return;
+		}
+		BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, true, address, port));
+		BBServer.getPacketManager().runDeauthTask(new DeauthTask(username, address, port, 5, 2000));
 	}
 
 	/**
