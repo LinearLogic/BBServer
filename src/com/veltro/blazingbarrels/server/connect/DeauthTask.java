@@ -1,9 +1,10 @@
 package com.veltro.blazingbarrels.server.connect;
 
+import java.net.InetAddress;
+
 import com.veltro.blazingbarrels.server.BBServer;
 import com.veltro.blazingbarrels.server.connect.packet.Packet02DeauthWarning;
-import com.veltro.blazingbarrels.server.game.Player;
-import com.veltro.blazingbarrels.server.game.World;
+import com.veltro.blazingbarrels.server.connect.packet.Packet20PlayerJoin;
 
 /**
  * A task thread used to send {@link Packet02DeauthWarning} packets to a client that has been authorized to join but
@@ -16,10 +17,20 @@ import com.veltro.blazingbarrels.server.game.World;
 public class DeauthTask extends Thread {
 
 	/**
-	 * The player whose client is the recipient of the {@link Packet02DeauthWarning} packets being sent, and who will
-	 * be removed from the server if a response is not received within the allotted time.
+	 * The name of the player whose client is the recipient of the {@link Packet02DeauthWarning} packets being sent,
+	 * and who will be removed from the server if a response is not received within the allotted time.
 	 */
-	private Player player;
+	private String name;
+
+	/**
+	 * The IP address of the client being sent deauthorization warnings
+	 */
+	private InetAddress address;
+
+	/**
+	 * The port on the recipient client's {@link #address}
+	 */
+	private int port;
 
 	/**
 	 * The number of {@link Packet02DeauthWarning} packets to send to the client before disconnecting it
@@ -35,13 +46,17 @@ public class DeauthTask extends Thread {
 	 * Constructs the Thread superclass and initializes the {@link #player}, {@link #warnings}, and {@link #timeout}
 	 * fields to the provided values.
 	 * 
-	 * @param player
-	 * @param warnings
-	 * @param timeout
+	 * @param playerName The name of the player receiving the deauthorization warning
+	 * @param address The IP address of the client of the player the above name
+	 * @param port The port on the above address
+	 * @param warnings The number of warnings to send the player's client before deauthorizing the player
+	 * @param timeout The amount of time, in milliseconds, between warnings being sent
 	 */
-	public DeauthTask(Player player, int warnings, int timeout) {
+	public DeauthTask(String playerName, InetAddress address, int port, int warnings, int timeout) {
 		super("DeauthTask");
-		this.player = player;
+		name = playerName;
+		this.address = address;
+		this.port = port;
 		this.warnings = warnings;
 		this.timeout = timeout;
 	}
@@ -52,19 +67,46 @@ public class DeauthTask extends Thread {
 	 * from the server for timing out.
 	 */
 	public void run() {
-		Packet02DeauthWarning packet = new Packet02DeauthWarning(player.getName(), player.getClientAddress(),
-				player.getClientPort());
-		for (int i = 0; i == warnings; i++) {
+		Packet02DeauthWarning packet = new Packet02DeauthWarning(name, address, port);
+		for (int i = 0; i < warnings; i++) {
 			try {
 				wait(timeout);
 			} catch (InterruptedException e) { // The client has sent a PlayerJoin packet; cease the deauth warnings
-				System.err.println("Stopping the deauth task for player " + player.getName() + "!"); // for debugging
+				System.err.println("Stopping the deauth task for player " + name + "!"); // for debugging
 				return;
 			}
-			if (i < warnings)
-				BBServer.getSenderDaemon().outgoingPacketQueue.add(packet);
-			else
-				World.getPlayer(player.getName()).disconnect(1); // Disconnect the player, citing a network connection timeout
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(packet);
 		}
+	}
+
+	/**
+	 * Starts the task thread
+	 * 
+	 * @return The DeauthTask object running this method
+	 */
+	public DeauthTask startTask() {
+		super.start();
+		return this;
+	}
+
+	/**
+	 * @return The {@link #name} of the task's player
+	 */
+	public String getPlayerName() {
+		return name;
+	}
+
+	/**
+	 * @return The {@link #address} registered with the task
+	 */
+	public InetAddress getClientAddress() {
+		return address;
+	}
+
+	/**
+	 * @return The port on the {@link #address} registered with the task
+	 */
+	public int getClientPort() {
+		return port;
 	}
 }

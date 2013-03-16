@@ -30,15 +30,15 @@ public class Packet01AuthResponse extends BBPacket {
 	 * its Internet destination address. Initializes all class fields.
 	 * 
 	 * @param username An account's {@link #username}
-	 * @param authorizationVerdict A String flag that is either "1" or "0" depending on the result of the user's
-	 * attempt at authorization on the server
+	 * @param authorizationVerdict 'true' if the player was successfully authorized (ie. if the password was accepted),
+	 * else 'false'
 	 * @param address The IP address from which the packet was sent
 	 * @param port The port on the above address
 	 */
-	public Packet01AuthResponse(String username, String authorizationVerdict, InetAddress address, int port) {
-		super(1, "username " + authorizationVerdict, address, port);
+	public Packet01AuthResponse(String username, boolean authorizationVerdict, InetAddress address, int port) {
+		super(1, "username " + (authorizationVerdict ? "1" : "0"), address, port);
 		this.username = username;
-		authorized = (authorizationVerdict.equals("1")) ? true : false;
+		authorized = authorizationVerdict;
 	}
 
 	/**

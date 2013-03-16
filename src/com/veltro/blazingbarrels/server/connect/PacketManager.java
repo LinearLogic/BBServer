@@ -1,5 +1,6 @@
 package com.veltro.blazingbarrels.server.connect;
 
+import java.util.HashMap;
 import java.util.TreeSet;
 
 import com.veltro.blazingbarrels.server.BBServer;
@@ -38,6 +39,12 @@ public class PacketManager {
 	 * snapshot is sent every ten seconds, or 200 cycles; at the same time, this number is reset to 0.
 	 */
 	private int cycleCount = 0;
+
+	/**
+	 * A registry of all the currently running {@link DeauthTask} objects. Each task is coupled with the name of the
+	 * player the task is running for.
+	 */
+	private HashMap<String, DeauthTask> deauthTasks = new HashMap<String, DeauthTask>();
 
 	/**
 	 * Executes a cycle, advancing the game based on packets received since the last cycle and generating response
@@ -164,5 +171,37 @@ public class PacketManager {
 			outgoing = new Packet10ServerSnapshot(false, target.getClientAddress(), target.getClientPort());
 			outgoing.addPlayerSnapshot(p);
 		}
+	}
+
+	/**
+	 * Runs the provided task and registers it in the HashMap of {@link #deauthTasks}
+	 */
+	public synchronized void runDeauthTask(DeauthTask task) {
+		if (deauthTasks.containsKey(task.getPlayerName())) // There is already a deauth task running for the this player
+			return;
+		deauthTasks.put(task.getPlayerName(), task.startTask());
+	}
+
+	/**
+	 * Attempts to cancel the {@link DeauthTask} (if any) associated with the player with the provided name
+	 * 
+	 * @param playerName The name of the player whose client is being pinged with deauthorization warnings
+	 */
+	public synchronized void cancelDeauthTask(String playerName) {
+		try {
+			deauthTasks.get(playerName).interrupt();
+		} catch (NullPointerException e) { // There isn't a deauth task running for the player with the provided name
+			return;
+		}
+	}
+
+	/**
+	 * Determines whether a {@link DeauthTask} is running for the player with the provided name
+	 * 
+	 * @param playerName The name of the player to check
+	 * @return 'true' iff a deauth task is running for that player
+	 */
+	public synchronized boolean hasAssociatedDeauthTask(String playerName) {
+		return deauthTasks.containsKey(playerName);
 	}
 }

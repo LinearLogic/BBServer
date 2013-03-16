@@ -160,10 +160,28 @@ public class Player {
 	}
 
 	/**
-	 * Kicks the player from the server
+	 * Disconnects the player from the server with the provided reason ID
+	 * 
+	 * @param reasonID 0 if the player quit voluntarily (the server should never be deciding this), 1 if the player's network
+	 * connection timed out, and 2 if the player was kicked
 	 */
-	public void kick() {
-		changes.add(ChangeType.DISCONNECT_KICK);
+	public void disconnect(int reasonID) {
+		switch(reasonID) {
+			case 0:
+				changes.clear();
+				changes.add(ChangeType.DISCONNECT_QUIT);
+				break;
+			case 1:
+				changes.clear();
+				changes.add(ChangeType.DISCONNECT_TIMEOUT);
+				break;
+			case 2:
+				changes.clear();
+				changes.add(ChangeType.DISCONNECT_KICK);
+			default:
+				// TODO: log that the server attempted to disconnect a player for an invalid reason
+				break;
+		}
 	}
 
 	/**
