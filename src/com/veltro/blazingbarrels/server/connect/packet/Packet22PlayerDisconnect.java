@@ -2,6 +2,9 @@ package com.veltro.blazingbarrels.server.connect.packet;
 
 import java.net.InetAddress;
 
+import com.veltro.blazingbarrels.server.game.Player;
+import com.veltro.blazingbarrels.server.game.World;
+
 /**
  * This packet is sent by a client upon voluntarily disconnecting from a server, or from a server to notify clients
  * that a player has disconnected. In the latter case, this packet includes the reason for the disconnect.<p>
@@ -40,8 +43,15 @@ public class Packet22PlayerDisconnect extends BBPacket {
 		this.reasonID = reasonID;
 	}
 
+	/**
+	 * Retrieves the {@link Player} with the provided username (if any) and registers a disconnect {@link ChangeType}
+	 * based on the packet's {@link #reasonID}
+	 */
 	public void handle() {
-		
+		Player disconnecting = World.getPlayer(username);
+		if (disconnecting == null)
+			return;
+		disconnecting.disconnect(reasonID);
 	}
 
 	/**
