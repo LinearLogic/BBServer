@@ -97,7 +97,7 @@ public class Packet40WeaponFire extends BBPacket {
 				continue;
 			// Player is a potential target
 			Vector3D target = new Vector3D(p.getLocation().getX(), p.getLocation().getY(), p.getLocation().getZ());
-			if (Math.sqrt(Math.pow(direction.dot(source.add(target)), 2) + (Player.SHIELD_RADIUS ^ 2) +
+			if (Math.sqrt(Math.pow(direction.dot(source.add(target)), 2) + (Player.SHIELD_RADIUS ^ 2) -
 					source.add(target.negate()).square()) >= 0) { // The shot has hit the player
 				p.damage(type.damage - (int) (type.damageDropoff * trajectoryRay.distanceTo(p.getLocation()) / 100.0));
 				if (p.getHealth() == BBServer.getConfig().getHealthCap()) { // The shot killed the player
