@@ -4,6 +4,7 @@ import java.net.InetAddress;
 
 import com.veltro.blazingbarrels.server.game.Location3D;
 import com.veltro.blazingbarrels.server.game.Player;
+import com.veltro.blazingbarrels.server.game.World;
 
 /**
  * This packet is sent by a client to update the server's copy of the client's {@link Player}, and is broadcasted by
@@ -93,8 +94,28 @@ public class Packet30PlayerUpdate extends BBPacket {
 		this.toggleVisibility = toggleVisibility;
 	}
 
+	/**
+	 * Retrieves the {@link Player} with the provided {@link #username} (if any), and updates the player according to
+	 * the values of the packet's fields.
+	 */
 	public void handle() {
-		
+		Player player = World.getPlayer(username);
+		if (player == null)
+			return;
+		player.setClientAddress(address);
+		player.setClientPort(port);
+		if (location != null)
+			player.setLocation(location);
+		if (health > -1)
+			player.setHealth(health);
+		if (toggleAdmin)
+			player.setAdmin(!player.isAdmin());
+		if (toggleFlyMode)
+			player.setFlyMode(!player.isFlyModeEnabled());
+		if (toggleGodMode)
+			player.setGodMode(!player.isGodModeEnabled());
+		if (toggleVisibility)
+			player.setVanished(!player.isVanished());
 	}
 
 	/**

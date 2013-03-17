@@ -70,12 +70,15 @@ public class PacketManager {
 			switch(changes[0]) {
 			case DISCONNECT_KICK:
 				broadcastPacket(new Packet22PlayerDisconnect(player.getName(), 2, null, 0));
+				World.removePlayer(player);
 				continue;
 			case DISCONNECT_TIMEOUT:
 				broadcastPacket(new Packet22PlayerDisconnect(player.getName(), 1, null, 0));
+				World.removePlayer(player);
 				continue;
 			case DISCONNECT_QUIT:
 				broadcastPacket(new Packet22PlayerDisconnect(player.getName(), 0, null, 0));
+				World.removePlayer(player);
 				continue;
 			default:
 				break;

@@ -204,10 +204,28 @@ public class Player {
 	}
 
 	/**
+	 * Sets the player's {@link #clientAddress} to the provided InetAddress
+	 * 
+	 * @param address
+	 */
+	public void setClientAddress(InetAddress address) {
+		clientAddress = address;
+	}
+
+	/**
 	 * @return The port on the player's {@link #clientAddress}
 	 */
 	public int getClientPort() {
 		return clientPort;
+	}
+
+	/**
+	 * Sets the player's port to the provided integer value
+	 * 
+	 * @param port
+	 */
+	public void setClientPort(int port) {
+		clientPort = port;
 	}
 
 	/**

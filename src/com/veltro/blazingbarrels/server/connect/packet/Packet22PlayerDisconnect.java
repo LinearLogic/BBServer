@@ -51,6 +51,8 @@ public class Packet22PlayerDisconnect extends BBPacket {
 		Player disconnecting = World.getPlayer(username);
 		if (disconnecting == null)
 			return;
+		disconnecting.setClientAddress(address);
+		disconnecting.setClientPort(port);
 		disconnecting.disconnect(reasonID);
 	}
 
