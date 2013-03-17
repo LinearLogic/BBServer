@@ -21,9 +21,11 @@ public class Packet01AuthResponse extends BBPacket {
 	private String username;
 
 	/**
-	 * The user's authorization verdict - 'true' if authorized, else false
+	 * The user's authorization verdict - '0' if not authorized due to the server's player cap being reached, '1' if
+	 * not authorized due to the provided {@link #username} being taken, '2' if not authorized due to an incorrect
+	 * password, '3' if successfully authorized.
 	 */
-	private boolean authorized;
+	private int authorized;
 
 	/**
 	 * Constructs the {@link BBPacket} superclass with the ID of this packet (1), its data rendered as a string, and
@@ -35,8 +37,8 @@ public class Packet01AuthResponse extends BBPacket {
 	 * @param address The IP address from which the packet was sent
 	 * @param port The port on the above address
 	 */
-	public Packet01AuthResponse(String username, boolean authorizationVerdict, InetAddress address, int port) {
-		super(1, "username " + (authorizationVerdict ? "1" : "0"), address, port);
+	public Packet01AuthResponse(String username, int authorizationVerdict, InetAddress address, int port) {
+		super(1, "username " + authorizationVerdict, address, port);
 		this.username = username;
 		authorized = authorizationVerdict;
 	}
@@ -54,9 +56,9 @@ public class Packet01AuthResponse extends BBPacket {
 	}
 
 	/**
-	 * @return Whether or not the user was successfully authorized to play on the server he/she tried to connect to
+	 * @return The {@link #authorized ID} representing the authorization verdict
 	 */
-	public boolean isAuthorized() {
+	public int getAuthorizationVerdictID() {
 		return authorized;
 	}
 }

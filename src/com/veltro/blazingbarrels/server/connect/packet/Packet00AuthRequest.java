@@ -9,8 +9,9 @@ import com.veltro.blazingbarrels.server.game.World;
 /**
  * The packet sent by the client when attempting to authorize on a server in order to join and play. It contains the
  * username of the player attempting to connect and the password supplied by the client. If the password matches the
- * server's password or if the server does not have a password, the client is sent a positive response; otherwise, the
- * client receives a negative response. In both cases, the server sends a {@link Packet01AuthResponse} to the client.<p>
+ * server's password (or if the server does not have a password), the server is not full, and the supplied username is
+ * not taken, the client is sent a positive response; otherwise, the client receives a negative response. In either
+ * case, the server sends a {@link Packet01AuthResponse} to the client.<p>
  * 
  * This packet is only ever received by the server.
  * 
@@ -47,28 +48,29 @@ public class Packet00AuthRequest extends BBPacket {
 	}
 
 	/**
-	 * Sends a {@link Packet01AuthResponse} to the client that sent this authorization request. The auth response will
-	 * be positive (meaning the player was authorized) iff the provided {@link #password} is accepted and if the
-	 * provided {@link #username} is not already in used on the server.<p>
-	 * If the player is successsfully authorized, a {@link DeauthTask} will be scheduled.
+	 * Sends a {@link Packet01AuthResponse} to the client that sent this authorization request. The player will be
+	 * authorized iff the server is not full, the provided {@link #username} is not taken, and the provided
+	 * {@link #password} is correct.<p>
+	 * If the player is successfully authorized, a {@link DeauthTask} will be scheduled.
 	 */
 	public void handle() {
 		// Make sure the player is not already on the server; if so, ignore this packet:
-		if (World.getPlayer(username) != null || BBServer.getPacketManager().hasAssociatedDeauthTask(username))
-			return;
-		if (!BBServer.getConfig().getPassword().equals("") && !BBServer.getConfig().getPassword().equals(password)) {
-			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, false, address,
-					port));
-			System.out.println("Player " + username + " failed to join: wrong password");
+		if (World.getPlayers().length >= BBServer.getConfig().getPlayerCap()) {
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, 0, address, port));
+			System.out.println("Player " + username + " failed to join: server is full");
 			return;
 		}
 		if (World.getPlayer(username) != null || BBServer.getPacketManager().hasAssociatedDeauthTask(username)) {
-			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, false, address,
-					port));
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, 1, address, port));
 			System.out.println("Player " + username + " failed to join: username is taken");
 			return;
 		}
-		BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, true, address, port));
+		if (!BBServer.getConfig().getPassword().equals("") && !BBServer.getConfig().getPassword().equals(password)) {
+			BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, 2, address, port));
+			System.out.println("Player " + username + " failed to join: wrong password");
+			return;
+		}
+		BBServer.getSenderDaemon().outgoingPacketQueue.add(new Packet01AuthResponse(username, 3, address, port));
 		BBServer.getPacketManager().runDeauthTask(new DeauthTask(username, address, port, 5, 2000));
 	}
 

@@ -83,7 +83,7 @@ public class ReceiverThread extends Thread {
 			data = data[1].split("\\s+");
 			BBPacket received = null;;
 
-			switch(id) { // Only the id values of packets that a client should normally receive are handled
+			switch(id) { // Only the id values of packets that the server should normally receive are handled
 			
 				// Packet00AuthRequest
 				case 0:
