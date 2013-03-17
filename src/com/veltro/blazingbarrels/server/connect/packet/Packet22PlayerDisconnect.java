@@ -38,7 +38,7 @@ public class Packet22PlayerDisconnect extends BBPacket {
 	 * @param port The port on the above address
 	 */
 	public Packet22PlayerDisconnect(String username, int reasonID, InetAddress address, int port) {
-		super(22, username + reasonID, address, port);
+		super(22, username + " " + reasonID, address, port);
 		this.username = username;
 		this.reasonID = reasonID;
 	}

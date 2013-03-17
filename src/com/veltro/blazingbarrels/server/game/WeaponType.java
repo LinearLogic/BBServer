@@ -105,7 +105,7 @@ public enum WeaponType {
 	 * @param ID A positive integer in the range of the WeaponType IDs
 	 * @return The WeaponType with the specified ID
 	 */
-	public WeaponType getTypeFromID(int ID) {
+	public static WeaponType getTypeFromID(int ID) {
 		switch(ID) {
 		case 0:
 			return GAUSS_TURRET;

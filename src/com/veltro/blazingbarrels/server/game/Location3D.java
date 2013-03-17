@@ -75,12 +75,12 @@ public class Location3D {
 		if (data.length != 6)
 			return;
 		try {
-			x = Integer.parseInt(data[0]);
-			y = Integer.parseInt(data[1]);
-			z = Integer.parseInt(data[2]);
-			yaw = Integer.parseInt(data[3]);
-			pitch = Integer.parseInt(data[4]);
-			roll = Integer.parseInt(data[5]);
+			x = Float.parseFloat(data[0]);
+			y = Float.parseFloat(data[1]);
+			z = Float.parseFloat(data[2]);
+			yaw = Float.parseFloat(data[3]);
+			pitch = Float.parseFloat(data[4]);
+			roll = Float.parseFloat(data[5]);
 		} catch (NumberFormatException e) { // Invalid formatting - revert to default location
 			return;
 		}

@@ -8,6 +8,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.veltro.blazingbarrels.server.connect.packet.BBPacket;
 import com.veltro.blazingbarrels.server.connect.packet.Packet00AuthRequest;
+import com.veltro.blazingbarrels.server.connect.packet.Packet20PlayerJoin;
+import com.veltro.blazingbarrels.server.connect.packet.Packet22PlayerDisconnect;
+import com.veltro.blazingbarrels.server.connect.packet.Packet30PlayerUpdate;
+import com.veltro.blazingbarrels.server.connect.packet.Packet40WeaponFire;
+import com.veltro.blazingbarrels.server.game.Location3D;
+import com.veltro.blazingbarrels.server.game.WeaponType;
 
 /**
  * A thread dedicated to receiving Datagram packets over a network socket. While running, this thread receives Datagram
@@ -48,8 +54,8 @@ public class ReceiverThread extends Thread {
 	}
 
 	/**
-	 * The thread listens for incoming packets arriving over the socket, casts them to BBPacket subclass objects, and
-	 * adds them to the {@link #incomingPacketQueue}
+	 * The thread listens for incoming DatagramPackets arriving over the socket, casts them to BBPacket subclass
+	 * objects, and adds them to the {@link #incomingPacketQueue}
 	 */
 	public void run() {
 		while (running) {
@@ -65,33 +71,109 @@ public class ReceiverThread extends Thread {
 
 			
 			// Unpack the packet's contents
-			String data[] = new String(inbound.getData(), 0, inbound.getLength()).split("\\s+", 2);
+			String[] data = new String(inbound.getData(), 0, inbound.getLength()).split("\\s+", 2);
+			if (data.length <= 1) // No packet data beyond an ID has been supplied - discard packet
+				continue;
 			int id;
 			try {
 				id = Integer.parseInt(data[0]);
 			} catch (NumberFormatException e) { // Invalid packet format - discard packet
 				continue;
 			}
+			data = data[1].split("\\s+");
 			BBPacket received = null;;
 
 			switch(id) { // Only the id values of packets that a client should normally receive are handled
+			
+				// Packet00AuthRequest
 				case 0:
-					if (data.length == 2) { // A username but no password has been specified
-						received = new Packet00AuthRequest(data[1], null, inbound.getAddress(), inbound.getPort());
-						break;
-					}
-					if (data.length == 3) { // Both a username and password have been specified
-						received = new Packet00AuthRequest(data[1], data[2], inbound.getAddress(), inbound.getPort());
-						break;
-					}
-					received = null; // Invalid packet contents
+					received = new Packet00AuthRequest(data[0], (data.length >= 2 ? data[1].trim() : ""),
+							inbound.getAddress(), inbound.getPort());
 					break;
+
+				// Packet20PlayerJoin
+				case 20:
+					received = new Packet20PlayerJoin(data[0], (data.length >= 2 && data[1].equalsIgnoreCase("s") ?
+							true : false), inbound.getAddress(), inbound.getPort());
+					break;
+
+				// Packet22PlayerDisconnect
+				case 22:
+					int reasonID = 0;
+					if (data.length >= 2) {
+						try {
+							reasonID = Integer.parseInt(data[1]);
+						} catch (NumberFormatException e) {
+							break;
+						}
+						if (reasonID < 0 || reasonID > 2)
+							reasonID = 0;
+					}
+					received = new Packet22PlayerDisconnect(data[0], reasonID, inbound.getAddress(), inbound.getPort());
+					break;
+
+				// Packet30PlayerUpdate
+				case 30:
+					if (data.length < 2 || data.length > 7) { // Too many updates - or none, have been specified
+						break;
+					}
+					Packet30PlayerUpdate update = new Packet30PlayerUpdate(data[0], null, -1, false, false, false,
+							false, inbound.getAddress(), inbound.getPort());
+					for (int i = 1; i < data.length; i++) {
+						String flag = data[i];
+						switch(flag.charAt(0)) {
+							case 'l':
+								update.setLocation(new Location3D(flag.substring(1)));
+								break;
+							case 'h':
+								try {
+									update.setHealth(Integer.parseInt(flag.substring(1)));
+								} catch (NumberFormatException e) {
+									break;
+								}
+								break;
+							case 'a':
+								update.toggleAdminStatus();
+								break;
+							case 'f':
+								update.toggleFlymode();
+								break;
+							case 'g':
+								update.toggleGodMode();
+								break;
+							case 'v':
+								update.toggleVisibility();
+								break;
+							default:
+								break;
+						}
+					}
+					update.updateData();
+					received = update;
+					break;
+
+				// Packet40WeaponFire
+				case 40:
+					if (data.length != 3) // Invalid packet contents
+						break;
+					int weaponTypeID;
+					try {
+						weaponTypeID = Integer.parseInt(data[2]);
+					} catch (NumberFormatException e) {
+						break;
+					}
+					WeaponType type = WeaponType.getTypeFromID(weaponTypeID);
+					if (type == null)
+						break;
+					received = new Packet40WeaponFire(data[0], new Location3D(data[1]), type, inbound.getAddress(),
+							inbound.getPort());
+					break;
+
 				default:
 					break;
 			}
 			if (received != null)
 				incomingPacketQueue.add(received);
-			
 		}
 		socket.close();
 	}
