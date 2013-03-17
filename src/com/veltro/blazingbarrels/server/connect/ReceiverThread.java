@@ -117,8 +117,9 @@ public class ReceiverThread extends Thread {
 					if (data.length < 2 || data.length > 7) { // Too many updates - or none, have been specified
 						break;
 					}
-					Packet30PlayerUpdate update = new Packet30PlayerUpdate(data[0], null, -1, false, false, false,
-							false, inbound.getAddress(), inbound.getPort());
+					Packet30PlayerUpdate update = new Packet30PlayerUpdate(data[0]);
+					update.setAddress(inbound.getAddress());
+					update.setPort(inbound.getPort());
 					for (int i = 1; i < data.length; i++) {
 						String flag = data[i];
 						switch(flag.charAt(0)) {

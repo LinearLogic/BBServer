@@ -25,7 +25,7 @@ public class Packet02DeauthWarning extends BBPacket {
 	 * Constructs the {@link BBPacket} superclass with the ID of this packet (2), its data rendered as a string, and
 	 * its Internet destination address. Initializes all class fields.
 	 * 
-	 * @param username The username of the player in jeopardy of deauthorization (used by a client to make sure it the
+	 * @param username The username of the player in jeopardy of deauthorization (used by the client to make sure the
 	 * packet isn't meant for someone else)
 	 * @param address The IP address of the client being warned of impending deauthorization
 	 * @param port The port on the above address

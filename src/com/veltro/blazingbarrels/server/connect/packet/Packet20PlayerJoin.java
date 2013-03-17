@@ -62,6 +62,7 @@ public class Packet20PlayerJoin extends BBPacket {
 			joined = new Player(username, address, port);
 		World.addPlayer(joined);
 		BBServer.getPacketManager().broadcastPacket(new Packet21PlayerConnect(joined));
+		BBServer.getPacketManager().sendServerSnapshot(joined);
 	}
 
 	/**
