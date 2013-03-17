@@ -37,7 +37,7 @@ public enum WeaponType {
 	 * 
 	 * The player can switch to this weapon.
 	 */
-	ANTIMATTER_BEAM (2, 80, 5),
+	ANTIMATTER_BEAM (2, 80, 1.5F),
 
 	/**
 	 * The rift jet operates by creating a rift in the spacetime continuum. Spacetime stretches as it tries to fill the
@@ -47,7 +47,7 @@ public enum WeaponType {
 	 * 
 	 * This weapon can only be obtained via supply drop.
 	 */
-	RIFT_JET(3, 60, -7),
+	RIFT_JET(3, 60, -2.5F),
 
 	/**
 	 * Every game has something like it. The nuke destroys every player on the server except for its user, who somehow
@@ -84,7 +84,7 @@ public enum WeaponType {
 	 * The amount by which the {@link #damage} decreases for every hundred pixels of distance between the source of the
 	 * shot and its victim (positive and negative values as well as zero are allowed)
 	 */
-	public int damageDropoff;
+	public float damageDropoff;
 	
 	/**
 	 * Enum constructor
@@ -93,7 +93,7 @@ public enum WeaponType {
 	 * @param damage The weapon type's {@link #damage}
 	 * @param damageDropoff The weapon type's {@link #damageDropoff}
 	 */
-	WeaponType(int ID, int damage, int damageDropoff) {
+	WeaponType(int ID, int damage, float damageDropoff) {
 		this.ID = ID;
 		this.damage = damage;
 		this.damageDropoff = damageDropoff;
